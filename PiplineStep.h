@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include <string>
+#include <QXmlStreamWriter>
+#include <QXmlStreamReader>
 
 struct ExecuteArgs
 {
@@ -15,7 +17,10 @@ private:
 	bool m_bEnable;
 
 public:
-	virtual bool execute(const ExecuteArgs& args) = 0;
+	PiplineStep() : m_bEnable{ true } {}
+	virtual bool execute(const ExecuteArgs& a_args)const = 0;
+	virtual void save(QXmlStreamWriter& a_writer)const = 0;
+	virtual void load(QXmlStreamReader& a_reader) = 0;
 };
 
 /*

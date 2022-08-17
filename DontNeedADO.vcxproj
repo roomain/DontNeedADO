@@ -32,12 +32,12 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>Qt_6.3.1_x64</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
+    <QtModules>core;gui;widgets;xml</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>Qt_6.3.1_x64</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
+    <QtModules>core;gui;widgets;xml</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
@@ -87,8 +87,10 @@
   <ItemGroup>
     <ClCompile Include="CMakePanel.cpp" />
     <ClCompile Include="NugetPanel.cpp" />
+    <ClCompile Include="Pipline.cpp" />
     <ClCompile Include="PiplineStep.cpp" />
     <ClCompile Include="ReplacePanel.cpp" />
+    <ClCompile Include="ReplaceStep.cpp" />
     <ClCompile Include="TagPanel.cpp" />
     <QtRcc Include="DontNeedADO.qrc" />
     <QtUic Include="CMakePanel.ui" />
@@ -118,7 +120,9 @@
     <QtMoc Include="TagPanel.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Pipline.h" />
     <ClInclude Include="PiplineStep.h" />
+    <ClInclude Include="ReplaceStep.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

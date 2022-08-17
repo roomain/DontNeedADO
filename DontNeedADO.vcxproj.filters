@@ -58,6 +58,12 @@
     <ClCompile Include="PiplineStep.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ReplaceStep.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Pipline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="GitClonePanel.h">
@@ -95,6 +101,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PiplineStep.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ReplaceStep.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Pipline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
