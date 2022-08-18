@@ -64,6 +64,24 @@
     <ClCompile Include="Pipline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GitStep.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CMakeStep.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CompileStep.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TagStep.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NugetStep.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CompilePanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="GitClonePanel.h">
@@ -79,6 +97,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="TagPanel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="CompilePanel.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
@@ -98,6 +119,9 @@
     <QtUic Include="TagPanel.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="CompilePanel.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PiplineStep.h">
@@ -107,6 +131,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Pipline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GitStep.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CMakeStep.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CompileStep.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TagStep.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NugetStep.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

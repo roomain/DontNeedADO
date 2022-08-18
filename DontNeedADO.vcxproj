@@ -86,14 +86,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CMakePanel.cpp" />
+    <ClCompile Include="CMakeStep.cpp" />
+    <ClCompile Include="CompilePanel.cpp" />
+    <ClCompile Include="CompileStep.cpp" />
+    <ClCompile Include="GitStep.cpp" />
     <ClCompile Include="NugetPanel.cpp" />
+    <ClCompile Include="NugetStep.cpp" />
     <ClCompile Include="Pipline.cpp" />
     <ClCompile Include="PiplineStep.cpp" />
     <ClCompile Include="ReplacePanel.cpp" />
     <ClCompile Include="ReplaceStep.cpp" />
     <ClCompile Include="TagPanel.cpp" />
+    <ClCompile Include="TagStep.cpp" />
     <QtRcc Include="DontNeedADO.qrc" />
     <QtUic Include="CMakePanel.ui" />
+    <QtUic Include="CompilePanel.ui" />
     <QtUic Include="DontNeedADO.ui" />
     <QtMoc Include="DontNeedADO.h" />
     <ClCompile Include="DontNeedADO.cpp" />
@@ -120,9 +127,15 @@
     <QtMoc Include="TagPanel.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CMakeStep.h" />
+    <QtMoc Include="CompilePanel.h" />
+    <ClInclude Include="CompileStep.h" />
+    <ClInclude Include="GitStep.h" />
+    <ClInclude Include="NugetStep.h" />
     <ClInclude Include="Pipline.h" />
     <ClInclude Include="PiplineStep.h" />
     <ClInclude Include="ReplaceStep.h" />
+    <ClInclude Include="TagStep.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

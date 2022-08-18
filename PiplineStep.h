@@ -25,6 +25,7 @@ public:
 
 /*
 * Git Step: git clone <url>
+* git submodule update --init --recursive
 * Git Tag: git tag -a <tagname> -m <annotation>
 * Git log: git log
 * see https://blogs.sap.com/2018/06/22/generating-release-notes-from-git-commit-messages-using-basic-shell-commands-gitgrep/
