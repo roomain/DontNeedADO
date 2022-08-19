@@ -1,8 +1,10 @@
 #include "CompileStep.h"
+#include <QXmlStreamWriter>
+#include <QDomElement>
 
 
 
-bool CompileStep::execute(const ExecuteArgs& a_args)const
+bool CompileStep::execute(ExecuteArgs& a_args)const
 {
 	bool bRet = false;
 	//
@@ -16,7 +18,7 @@ void CompileStep::save(QXmlStreamWriter& a_writer)const
 	a_writer.writeEndElement();
 }
 
-void CompileStep::load(QXmlStreamReader& a_reader)
+void CompileStep::load(const QDomElement& a_reader)
 {
 	// TODO
 }

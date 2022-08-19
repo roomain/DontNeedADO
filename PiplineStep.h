@@ -1,14 +1,18 @@
 ﻿#pragma once
+#include <QString>
 #include <string>
-#include <QXmlStreamWriter>
-#include <QXmlStreamReader>
+
+class QXmlStreamWriter;
+class QDomElement;
 
 struct ExecuteArgs
 {
-	bool executeWithoutTag;
 	std::string workingDirectory;
+	QString outputLog;
 	/*TODO*/
 };
+
+
 
 /*@brief base class for a pipline step*/
 class PiplineStep
@@ -18,9 +22,12 @@ private:
 
 public:
 	PiplineStep() : m_bEnable{ true } {}
-	virtual bool execute(const ExecuteArgs& a_args)const = 0;
+	virtual bool execute(ExecuteArgs& a_args)const = 0;
 	virtual void save(QXmlStreamWriter& a_writer)const = 0;
-	virtual void load(QXmlStreamReader& a_reader) = 0;
+	virtual void load(const QDomElement& a_reader) = 0;
+	virtual inline bool isTagStep()const { return false; }
+	inline void setEnable(const bool a_enable) { m_bEnable = a_enable; }
+	inline bool isEnabled()const noexcept { return m_bEnable; }
 };
 
 /*

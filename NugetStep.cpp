@@ -1,8 +1,10 @@
 #include "NugetStep.h"
+#include <QXmlStreamWriter>
+#include <QDomElement>
 
 
 
-bool NugetStep::execute(const ExecuteArgs& a_args)const
+bool NugetStep::execute(ExecuteArgs& a_args)const
 {
 	bool bRet = false;
 	//
@@ -16,7 +18,7 @@ void NugetStep::save(QXmlStreamWriter& a_writer)const
 	a_writer.writeEndElement();
 }
 
-void NugetStep::load(QXmlStreamReader& a_reader)
+void NugetStep::load(const QDomElement& a_reader)
 {
 	// TODO
 }

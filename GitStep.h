@@ -3,12 +3,14 @@
 class GitStep : public PiplineStep
 {
 private:
-	// TODO
+	std::string m_url;
+
 public:
 	using PiplineStep::PiplineStep;
-	//TODO
-	bool execute(const ExecuteArgs& a_args)const final;
+	void setUrl(const std::string& a_url);
+	std::string url()const noexcept;
+	bool execute(ExecuteArgs& a_args)const final;
 	void save(QXmlStreamWriter& a_writer)const final;
-	void load(QXmlStreamReader& a_reader) final;
+	void load(const QDomElement& a_reader) final;
 };
 

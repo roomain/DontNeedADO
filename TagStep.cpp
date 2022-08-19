@@ -1,8 +1,10 @@
 #include "TagStep.h"
+#include <QXmlStreamWriter>
+#include <QDomElement>
 
 
 
-bool TagStep::execute(const ExecuteArgs& a_args)const
+bool TagStep::execute(ExecuteArgs& a_args)const
 {
 	bool bRet = false;
 	//
@@ -16,7 +18,7 @@ void TagStep::save(QXmlStreamWriter& a_writer)const
 	a_writer.writeEndElement();
 }
 
-void TagStep::load(QXmlStreamReader& a_reader)
+void TagStep::load(const QDomElement& a_reader)
 {
 	// TODO
 }

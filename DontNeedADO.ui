@@ -30,6 +30,81 @@
     <property name="spacing">
      <number>0</number>
     </property>
+    <item row="3" column="0">
+     <widget class="QPushButton" name="pBtnExecutePiplineWithoutTag">
+      <property name="text">
+       <string>Execute Pipline without tag</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <widget class="QSplitter" name="splitter">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QListWidget" name="lstPipline">
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::InternalMove</enum>
+       </property>
+      </widget>
+      <widget class="QStackedWidget" name="stackedWidget">
+       <property name="currentIndex">
+        <number>2</number>
+       </property>
+       <widget class="QWidget" name="pageLog">
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QTextEdit" name="tEdtLog">
+           <property name="minimumSize">
+            <size>
+             <width>300</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="GitClonePanel" name="pageGIT"/>
+       <widget class="CMakePanel" name="pageCMake"/>
+       <widget class="ReplacePanel" name="pageReplace"/>
+       <widget class="CompilePanel" name="pageCompile"/>
+       <widget class="NugetPanel" name="pageNuget"/>
+       <widget class="TagPanel" name="pageTag"/>
+      </widget>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QPushButton" name="pBtnExecutePipline">
+      <property name="text">
+       <string>Execute Pipline</string>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="0" colspan="2">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
@@ -43,7 +118,7 @@
        <widget class="QLineEdit" name="lEdtWorkingDir"/>
       </item>
       <item>
-       <widget class="QPushButton" name="pBtnEdit">
+       <widget class="QPushButton" name="pBtnBrowse">
         <property name="maximumSize">
          <size>
           <width>30</width>
@@ -57,35 +132,10 @@
       </item>
      </layout>
     </item>
-    <item row="1" column="0" colspan="2">
-     <widget class="QSplitter" name="splitter">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <widget class="QListWidget" name="listWidget"/>
-      <widget class="QStackedWidget" name="stackedWidget">
-       <widget class="QWidget" name="page"/>
-       <widget class="QWidget" name="page_2"/>
-      </widget>
-     </widget>
-    </item>
     <item row="2" column="0">
-     <widget class="QPushButton" name="pBtnExecutePiplineWithoutTag">
+     <widget class="QCheckBox" name="chBkCleanAtStart">
       <property name="text">
-       <string>Execute Pipline without tag</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QPushButton" name="pBtnExecutePipline">
-      <property name="text">
-       <string>Execute Pipline</string>
+       <string>Cleanup when pipline start</string>
       </property>
      </widget>
     </item>
@@ -106,6 +156,7 @@
     </property>
     <addaction name="actionNew_pipline"/>
     <addaction name="actionLoad_pipline"/>
+    <addaction name="actionSave_pipline"/>
    </widget>
    <addaction name="menuPipline"/>
   </widget>
@@ -116,6 +167,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionClean"/>
    <addaction name="actionDelete_Step"/>
    <addaction name="actionAdd_GIT_Clone_Step"/>
    <addaction name="actionAdd_CMake_Step"/>
@@ -136,42 +188,122 @@
    </property>
   </action>
   <action name="actionAdd_GIT_Clone_Step">
+   <property name="icon">
+    <iconset resource="DontNeedADO.qrc">
+     <normaloff>:/DontNeedADO/resources/git.png</normaloff>:/DontNeedADO/resources/git.png</iconset>
+   </property>
    <property name="text">
     <string>Add GIT Clone Step</string>
    </property>
   </action>
   <action name="actionDelete_Step">
+   <property name="icon">
+    <iconset resource="DontNeedADO.qrc">
+     <normaloff>:/DontNeedADO/resources/delete.png</normaloff>:/DontNeedADO/resources/delete.png</iconset>
+   </property>
    <property name="text">
     <string>Delete Step</string>
    </property>
   </action>
   <action name="actionAdd_CMake_Step">
+   <property name="icon">
+    <iconset resource="DontNeedADO.qrc">
+     <normaloff>:/DontNeedADO/resources/cmake.png</normaloff>:/DontNeedADO/resources/cmake.png</iconset>
+   </property>
    <property name="text">
     <string>Add CMake Step</string>
    </property>
   </action>
   <action name="actionAdd_Replace_String">
+   <property name="icon">
+    <iconset resource="DontNeedADO.qrc">
+     <normaloff>:/DontNeedADO/resources/replace.png</normaloff>:/DontNeedADO/resources/replace.png</iconset>
+   </property>
    <property name="text">
     <string>Add Replace String</string>
    </property>
   </action>
   <action name="actionAdd_Compile_Step">
+   <property name="icon">
+    <iconset resource="DontNeedADO.qrc">
+     <normaloff>:/DontNeedADO/resources/compile.png</normaloff>:/DontNeedADO/resources/compile.png</iconset>
+   </property>
    <property name="text">
     <string>Add Compile Step</string>
    </property>
   </action>
   <action name="actionAdd_Nuget_Step">
+   <property name="icon">
+    <iconset resource="DontNeedADO.qrc">
+     <normaloff>:/DontNeedADO/resources/nuget.png</normaloff>:/DontNeedADO/resources/nuget.png</iconset>
+   </property>
    <property name="text">
     <string>Add Nuget Step</string>
    </property>
   </action>
   <action name="actionAdd_Tag_Step">
+   <property name="icon">
+    <iconset resource="DontNeedADO.qrc">
+     <normaloff>:/DontNeedADO/resources/tag.png</normaloff>:/DontNeedADO/resources/tag.png</iconset>
+   </property>
    <property name="text">
     <string>Add Tag Step</string>
    </property>
   </action>
+  <action name="actionSave_pipline">
+   <property name="text">
+    <string>Save pipline</string>
+   </property>
+  </action>
+  <action name="actionClean">
+   <property name="icon">
+    <iconset resource="DontNeedADO.qrc">
+     <normaloff>:/DontNeedADO/resources/clean.png</normaloff>:/DontNeedADO/resources/clean.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clean</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>GitClonePanel</class>
+   <extends>QWidget</extends>
+   <header>gitclonepanel.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CMakePanel</class>
+   <extends>QWidget</extends>
+   <header>cmakepanel.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ReplacePanel</class>
+   <extends>QWidget</extends>
+   <header>replacepanel.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CompilePanel</class>
+   <extends>QWidget</extends>
+   <header>compilepanel.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>NugetPanel</class>
+   <extends>QWidget</extends>
+   <header>nugetpanel.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TagPanel</class>
+   <extends>QWidget</extends>
+   <header>tagpanel.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="DontNeedADO.qrc"/>
  </resources>

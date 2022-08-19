@@ -1,4 +1,13 @@
 <RCC>
-    <qresource prefix="DontNeedADO">
-    </qresource>
+  <qresource prefix="DontNeedADO">
+    <file>resources/clean.png</file>
+    <file>resources/ado.jpg</file>
+    <file>resources/delete.png</file>
+    <file>resources/cmake.png</file>
+    <file>resources/compile.png</file>
+    <file>resources/git.png</file>
+    <file>resources/nuget.png</file>
+    <file>resources/replace.png</file>
+    <file>resources/tag.png</file>
+  </qresource>
 </RCC>
