@@ -5,15 +5,20 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include "PiplineStep.h"
+#include <thread>
 
-class Pipline
+class Pipline : public QObject
 {
+	Q_OBJECT
+
 private:
 	std::string m_workingDir;
 	std::vector<std::shared_ptr<PiplineStep>> m_vSteps;
+	std::unique_ptr<std::thread> m_worker;
 
 public:
 	Pipline() = default;
+	~Pipline();
 	int stepCount()const;
 	void setWorkingDir(const std::string& a_dir);
 	std::string workingDir()const noexcept;
@@ -22,7 +27,7 @@ public:
 	void clear();
 	void save(QXmlStreamWriter& a_writer)const;
 	void load(const QDomElement& a_reader);
-	bool execute(ExecuteArgs& a_retArgs, const bool a_dontUseTag)const;
+	void execute(const bool a_dontUseTag);
 
 	using iterator = std::vector<std::shared_ptr<PiplineStep>>::iterator;
 	iterator begin() { return m_vSteps.begin(); }
@@ -37,5 +42,9 @@ public:
 		return m_vSteps[a_index];
 	}
 
+signals:
+	void sg_update(int, const QString&);
+	void sg_finished();
+	void sg_start(int);
 };
 

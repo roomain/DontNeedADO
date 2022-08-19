@@ -16,6 +16,9 @@ DontNeedADO::DontNeedADO(QWidget *parent)
     : QMainWindow(parent)
 {
     ui.setupUi(this);
+    m_pProgress = new QProgressBar;
+    ui.statusBar->addPermanentWidget(m_pProgress);
+
     QObject::connect(ui.pBtnBrowse, QOverload<bool>::of(&QPushButton::clicked), this, &DontNeedADO::onBrowseWorkingDir);
     QObject::connect(ui.pBtnExecutePipline, QOverload<bool>::of(&QPushButton::clicked), this, &DontNeedADO::executePipline);
     QObject::connect(ui.pBtnExecutePiplineWithoutTag, QOverload<bool>::of(&QPushButton::clicked), this, &DontNeedADO::executeWithoutTag);
@@ -40,6 +43,10 @@ DontNeedADO::DontNeedADO(QWidget *parent)
     QObject::connect(ui.pageReplace, &ReplacePanel::sg_enabled, this, &DontNeedADO::onEnable);
 
     ui.stackedWidget->setCurrentIndex(static_cast<int>(STEP_PAGES::LOG_PAGE));
+
+    QObject::connect(&m_ADOPipline, &Pipline::sg_start, this, &DontNeedADO::onPiplineStart);
+    QObject::connect(&m_ADOPipline, &Pipline::sg_update, this, &DontNeedADO::onPiplineUpdate);
+    QObject::connect(&m_ADOPipline, &Pipline::sg_finished, this, &DontNeedADO::onPiplineFinished);
 }
 
 DontNeedADO::~DontNeedADO()
@@ -64,10 +71,9 @@ void DontNeedADO::executePipline()
     if (ui.chBkCleanAtStart->isChecked())
         onClean();
 
+    ui.tEdtLog->clear();
     ui.stackedWidget->setCurrentIndex(static_cast<int>(STEP_PAGES::LOG_PAGE));
-    ExecuteArgs retArgs;
-    m_ADOPipline.execute(retArgs, false);
-    ui.tEdtLog->setPlainText(retArgs.outputLog);
+    m_ADOPipline.execute(false);    
 }
 
 void DontNeedADO::executeWithoutTag()
@@ -76,10 +82,26 @@ void DontNeedADO::executeWithoutTag()
     if(ui.chBkCleanAtStart->isChecked())
         onClean();
 
+    ui.tEdtLog->clear();
     ui.stackedWidget->setCurrentIndex(static_cast<int>(STEP_PAGES::LOG_PAGE));
-    ExecuteArgs retArgs;
-    m_ADOPipline.execute(retArgs, true);
-    ui.tEdtLog->setPlainText(retArgs.outputLog);
+    m_ADOPipline.execute(true);
+}
+
+void DontNeedADO::onPiplineStart(int a_StepCount)
+{
+    m_pProgress->setRange(0, a_StepCount - 1);
+    m_pProgress->setValue(0);
+}
+
+void DontNeedADO::onPiplineUpdate(int a_step, const QString& a_message)
+{
+    m_pProgress->setValue(a_step); 
+    ui.tEdtLog->append(a_message);
+}
+
+void DontNeedADO::onPiplineFinished()
+{
+    // TODO
 }
 
 void DontNeedADO::onClean()
@@ -143,12 +165,11 @@ void DontNeedADO::onLoadPipline()
             if (xmlPipline.setContent(&file))
             {
                 QDomElement root = xmlPipline.firstChildElement();
-                //auto startElem = root.firstChildElement("DontNeedADO");
                 if (!root.isNull())
                 {
                     ui.lEdtWorkingDir->setText(root.attribute("Working_directory"));
                     ui.chBkCleanAtStart->setChecked(root.attribute("Cleanup_at_start", "0") == "1");
-
+                    m_ADOPipline.setWorkingDir(ui.lEdtWorkingDir->text().toStdString());
                     m_ADOPipline.load(root.firstChildElement("Pipline"));
                 }
             }
@@ -169,6 +190,13 @@ void DontNeedADO::onLoadPipline()
                 {
                     QListWidgetItem* pItem = createItem(STEP_PAGES::CMAKE_PAGE);
                     pItem->setData(Qt::ForegroundRole, pCMake->isEnabled() ? QColor(Qt::black) : QColor(Qt::gray));
+                }
+
+                auto pReplace = dynamic_cast<ReplaceStep*>(pStep.get());
+                if (pReplace)
+                {
+                    QListWidgetItem* pItem = createItem(STEP_PAGES::REPLACE_PAGE);
+                    pItem->setData(Qt::ForegroundRole, pReplace->isEnabled() ? QColor(Qt::black) : QColor(Qt::gray));
                 }
             }
         }

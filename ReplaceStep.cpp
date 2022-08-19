@@ -45,17 +45,36 @@ void ReplaceStep::replaceToken(const int a_index, const std::string& a_token, co
 	m_vTokens[a_index].value = a_value;
 }
 
+
 bool ReplaceStep::execute(ExecuteArgs& a_args)const
 {
 	bool bRet = false;
 	
-	QDirIterator iter(QString::fromLatin1(a_args.workingDirectory), QDirIterator::Subdirectories);
-	while (iter.hasNext())
+	a_args.outputLog += "\nREPLACE:\n";
+	for (const auto& token : m_vTokens)
 	{
-		for (const auto& token : m_vTokens)
+		QString filter = QString::fromLatin1(token.filters);
+		auto lstFilters = filter.split(';');
+
+		QDirIterator iter(QString::fromLatin1(a_args.workingDirectory), lstFilters,
+			QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+		while (iter.hasNext())
 		{
-			//token.filters
-			//
+			QString path = iter.next();
+			QFileInfo dirInfo(path);
+			if (dirInfo.isFile())
+			{
+				QFile file(path);
+				if (file.open(QIODevice::ReadWrite))
+				{
+					QByteArray data = file.readAll();
+					data.replace(QByteArray(token.token.c_str()), QByteArray(token.value.c_str()));
+					file.seek(0);
+					file.write(data);
+					file.close();
+					a_args.outputLog += path + " : " + QString::fromLatin1(token.token) + " -> " + QString::fromLatin1(token.value);
+				}
+			}
 		}
 	}
 	

@@ -129,7 +129,7 @@ void CMakeStep::load(const QDomElement& a_reader)
 			}
 			else if (elem.tagName() == "Compiler_name")
 			{
-				m_cmakeOpt[PLATFORM] = elem.text().toStdString();
+				m_cmakeOpt[COMPILER_NAME] = elem.text().toStdString();
 			}
 		}
 	}

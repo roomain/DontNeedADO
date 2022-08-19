@@ -102,6 +102,9 @@
     <QtMoc Include="CompilePanel.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="Pipline.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="GitClonePanel.ui">
@@ -128,9 +131,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ReplaceStep.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Pipline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GitStep.h">

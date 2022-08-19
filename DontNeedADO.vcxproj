@@ -142,7 +142,7 @@
     <ClInclude Include="CompileStep.h" />
     <ClInclude Include="GitStep.h" />
     <ClInclude Include="NugetStep.h" />
-    <ClInclude Include="Pipline.h" />
+    <QtMoc Include="Pipline.h" />
     <ClInclude Include="PiplineStep.h" />
     <ClInclude Include="ReplaceStep.h" />
     <ClInclude Include="TagStep.h" />

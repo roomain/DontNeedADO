@@ -8,6 +8,13 @@
 #include <QXmlStreamWriter>
 #include <QDomElement>
 
+
+Pipline::~Pipline()
+{
+	if (m_worker)
+		m_worker->join();
+}
+
 int Pipline::stepCount()const
 {
 	return static_cast<int>(m_vSteps.size());
@@ -74,63 +81,40 @@ void Pipline::load(const QDomElement& a_reader)
 			}
 		}
 	}
-	/*if (a_reader.name() == QString("Pipline"))
-	{
-		if (a_reader.readNextStartElement())
-		{
-			do
-			{
-				if (a_reader.name() == QString("GitStep"))
-				{
-					std::shared_ptr<GitStep> pStep = std::make_shared<GitStep>();
-					pStep->load(a_reader);
-					m_vSteps.push_back(pStep);
-				}
-				else if (a_reader.name() == QString("CMakeStep"))
-				{
-					std::shared_ptr<CMakeStep> pStep = std::make_shared<CMakeStep>();
-					pStep->load(a_reader);
-					m_vSteps.push_back(pStep);
-				}
-				else if (a_reader.name() == QString("Pipline"))
-				{
-					//
-				}
-				else if (a_reader.name() == QString("ReplaceStep"))
-				{
-					std::shared_ptr<ReplaceStep> pStep = std::make_shared<ReplaceStep>();
-					pStep->load(a_reader);
-					m_vSteps.push_back(pStep);
-				}
-				else if (a_reader.name() == QString("Pipline"))
-				{
-					//
-				}
-				qDebug() << a_reader.name();
-				//a_reader.readNext();
-			} while (a_reader.readNextStartElement());
-		}
-	}*/
 }
 
-bool Pipline::execute(ExecuteArgs& a_retArgs, const bool a_dontUseTag)const
+void Pipline::execute(const bool a_dontUseTag)
 {
 	bool bRet = false;
-	a_retArgs.workingDirectory = m_workingDir;
-	for (auto& step : m_vSteps)
+	if (m_vSteps.size() > 0)
 	{
-		if (step->isEnabled())
-		{
-			if (a_dontUseTag)
+		if (m_worker)
+			m_worker->join();
+
+		m_worker = std::make_unique<std::thread>([&]()
 			{
-				if (!step->isTagStep())
-					step->execute(a_retArgs);
-			}
-			else
-			{
-				step->execute(a_retArgs);
-			}
-		}
+				ExecuteArgs args{ .workingDirectory = this->m_workingDir };
+				int iIndex = 0;
+				emit this->sg_start(m_vSteps.size());
+				for (auto& step : m_vSteps)
+				{
+					args.outputLog.clear();
+					if (step->isEnabled())
+					{
+						if (a_dontUseTag)
+						{
+							if (!step->isTagStep())
+								step->execute(args);
+						}
+						else
+						{
+							step->execute(args);
+						}
+					}
+					emit this->sg_update(iIndex, args.outputLog);
+					++iIndex;
+				}
+				emit this->sg_finished();
+			});
 	}
-	return bRet;
 }

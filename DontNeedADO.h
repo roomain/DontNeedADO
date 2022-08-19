@@ -3,6 +3,7 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_DontNeedADO.h"
 #include "Pipline.h"
+#include <qprogressbar.h>
 
 class QListWidgetItem;
 
@@ -27,6 +28,7 @@ private:
     };
 
     Ui::DontNeedADOClass ui;
+    QProgressBar* m_pProgress;
     Pipline m_ADOPipline;
 
     void clear();
@@ -51,4 +53,8 @@ private:
     //----------------------
     void onClean();
     void onEnable(bool a_bEnable);
+
+    void onPiplineStart(int a_StepCount);
+    void onPiplineUpdate(int a_step, const QString& a_message);
+    void onPiplineFinished();
 };

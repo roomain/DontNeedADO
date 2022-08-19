@@ -18,6 +18,8 @@ ReplacePanel::~ReplacePanel()
 
 void ReplacePanel::loadStep(ReplaceStep* const a_step)
 {
+	ui.tbwTokens->clearContents();
+	ui.tbwTokens->setRowCount(0);
 	m_pStep = a_step;
 	if (m_pStep)
 	{
