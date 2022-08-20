@@ -50,7 +50,7 @@ bool TagStep::execute(ExecuteArgs& a_args)const
 	QString argumentStr;
 	std::for_each(lstArgs.begin(), lstArgs.end(), [&](const auto& arg) {argumentStr += arg + " "; });
 
-	a_args.outputLog += "\n\nGIT TAG:\n" +
+	a_args.outputLog += "\n\nGIT TAG:" +
 		gitProcess.program() + " " + argumentStr + "\n" +
 		gitProcess.readAllStandardOutput() + "\n" + gitProcess.readAllStandardError();
 
@@ -69,7 +69,7 @@ bool TagStep::execute(ExecuteArgs& a_args)const
 	argumentStr.clear();
 	std::for_each(lstArgs.begin(), lstArgs.end(), [&](const auto& arg) {argumentStr += arg + " "; });
 
-	a_args.outputLog += "\n\nGIT PUSH TAG:\n" +
+	a_args.outputLog += "\n\nGIT PUSH TAG:" +
 		gitProcess.program() + " " + argumentStr + "\n" +
 		gitProcess.readAllStandardOutput() + "\n" + gitProcess.readAllStandardError();
 	return bOk;

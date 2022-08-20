@@ -94,7 +94,7 @@ bool CMakeStep::execute(ExecuteArgs& a_args)const
 	QString argumentStr;
 	std::for_each(lstArgs.begin(), lstArgs.end(), [&](const auto& arg) {argumentStr += arg + " "; });
 
-	a_args.outputLog += "\n\nCMAKE:\n" + 
+	a_args.outputLog += "\n\nCMAKE:" + 
 		cmakeProcess.program() + " " + argumentStr + "\n" +
 		cmakeProcess.readAllStandardOutput() + "\n" + cmakeProcess.readAllStandardError();
 	return bRet;

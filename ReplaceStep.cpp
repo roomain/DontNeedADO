@@ -51,7 +51,7 @@ bool ReplaceStep::execute(ExecuteArgs& a_args)const
 {
 	bool bRet = false;
 
-	a_args.outputLog += "\nREPLACE:\n";
+	a_args.outputLog += "\nREPLACE:";
 	for (const auto& token : m_vTokens)
 	{
 		QString filter = QString::fromLatin1(token.filters);
@@ -83,7 +83,7 @@ bool ReplaceStep::execute(ExecuteArgs& a_args)const
 	{
 		QStringList versionSplitted = QString::fromLatin1(m_version).split('.');
 
-		a_args.outputLog += "\nVERSIONNING:\n";
+		a_args.outputLog += "\nVERSIONNING:";
 		QDirIterator iter(QString::fromLatin1(a_args.workingDirectory), QStringList() << "*.rc",
 			QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
 		while (iter.hasNext())
