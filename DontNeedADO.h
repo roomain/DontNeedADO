@@ -30,6 +30,7 @@ private:
     Ui::DontNeedADOClass ui;
     QProgressBar* m_pProgress;
     Pipline m_ADOPipline;
+    QMenu* m_pRecentFiles;
 
     void clear();
     QListWidgetItem* createItem(const STEP_PAGES a_type);
@@ -49,6 +50,8 @@ private:
     void itemSelected();
     void onNewPipline();
     void onLoadPipline();
+    void onLoadPiplineFromRecent();
+    bool loadPipline(const QString& a_file);
     void onSavePipline();
     //----------------------
     void onClean();

@@ -99,6 +99,8 @@
     <ClCompile Include="CMakeStep.cpp" />
     <ClCompile Include="CompilePanel.cpp" />
     <ClCompile Include="CompileStep.cpp" />
+    <ClCompile Include="ConfigurationPanel.cpp" />
+    <ClCompile Include="DontNeedADOApp.cpp" />
     <ClCompile Include="GitStep.cpp" />
     <ClCompile Include="NugetPanel.cpp" />
     <ClCompile Include="NugetStep.cpp" />
@@ -111,6 +113,7 @@
     <QtRcc Include="DontNeedADO.qrc" />
     <QtUic Include="CMakePanel.ui" />
     <QtUic Include="CompilePanel.ui" />
+    <QtUic Include="ConfigurationPanel.ui" />
     <QtUic Include="DontNeedADO.ui" />
     <QtMoc Include="DontNeedADO.h" />
     <ClCompile Include="DontNeedADO.cpp" />
@@ -140,6 +143,8 @@
     <ClInclude Include="CMakeStep.h" />
     <QtMoc Include="CompilePanel.h" />
     <ClInclude Include="CompileStep.h" />
+    <QtMoc Include="ConfigurationPanel.h" />
+    <QtMoc Include="DontNeedADOApp.h" />
     <ClInclude Include="GitStep.h" />
     <ClInclude Include="NugetStep.h" />
     <QtMoc Include="Pipline.h" />

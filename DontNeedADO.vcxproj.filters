@@ -82,6 +82,12 @@
     <ClCompile Include="CompilePanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ConfigurationPanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DontNeedADOApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="GitClonePanel.h">
@@ -105,6 +111,12 @@
     <QtMoc Include="Pipline.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="ConfigurationPanel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="DontNeedADOApp.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="GitClonePanel.ui">
@@ -123,6 +135,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="CompilePanel.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="ConfigurationPanel.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

@@ -11,11 +11,27 @@
 #include <QDomDocument>
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
+#include "DontNeedADOApp.h"
 
 DontNeedADO::DontNeedADO(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent), m_pRecentFiles{ nullptr }
 {
     ui.setupUi(this);
+
+    DontNeedADOApp* pApp = static_cast<DontNeedADOApp*>(qApp);
+    QStringList lastfiles = pApp->lastFiles();
+    if (lastfiles.size() > 0)
+    {
+        m_pRecentFiles = new QMenu("RecentFiles");
+        for (auto file : lastfiles)
+        {
+            auto pAct = new QAction(file);
+            m_pRecentFiles->addAction(pAct);
+            QObject::connect(pAct, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onLoadPiplineFromRecent);
+        }
+        ui.menuPipline->addAction(m_pRecentFiles->menuAction());
+    }
+
     m_pProgress = new QProgressBar;
     ui.statusBar->addPermanentWidget(m_pProgress);
 
@@ -159,15 +175,81 @@ void DontNeedADO::onNewPipline()
     // TODO
 }
 
+
+void DontNeedADO::onLoadPiplineFromRecent()
+{
+    QAction* pAct = static_cast<QAction*>(sender());
+    if (loadPipline(pAct->text()))
+    {
+        DontNeedADOApp* pApp = static_cast<DontNeedADOApp*>(qApp);
+        pApp->removeFile(pAct->text());
+        pApp->addLastFile(pAct->text());
+        if (m_pRecentFiles)
+        {
+            m_pRecentFiles->removeAction(pAct);
+            m_pRecentFiles->addAction(pAct);
+        }
+    }
+}
+
 void DontNeedADO::onLoadPipline()
 {
     ui.tEdtLog->clear();
     auto filename = QFileDialog::getOpenFileName(this, "Load pipline", "", "Pipline (*.xml)");
-    if (!filename.isEmpty())
+    if (loadPipline(filename))
+    {
+        DontNeedADOApp* pApp = static_cast<DontNeedADOApp*>(qApp);
+        pApp->removeFile(filename);
+        pApp->addLastFile(filename);
+        if (m_pRecentFiles)
+        {
+            auto lAct = m_pRecentFiles->actions();
+            int indexAct = -1;
+            for (int i = 0; i < lAct.size() && indexAct < 0; ++i)
+            {
+                if (lAct[i]->text() == filename)
+                    indexAct = i;
+            }
+
+            if (indexAct >= 0)
+            {
+                auto pAct = lAct[indexAct];
+                m_pRecentFiles->removeAction(pAct);
+                m_pRecentFiles->addAction(pAct);
+            }
+            else
+            {
+                auto pAct = new QAction(filename);
+                m_pRecentFiles->addAction(pAct);
+                QObject::connect(pAct, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onLoadPiplineFromRecent);
+            }
+        }
+        else
+        {
+            QStringList lastfiles = pApp->lastFiles();
+            if (lastfiles.size() > 0)
+            {
+                m_pRecentFiles = new QMenu("RecentFiles");
+                for (auto file : lastfiles)
+                {
+                    auto pAct = new QAction(file);
+                    m_pRecentFiles->addAction(pAct);
+                    QObject::connect(pAct, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onLoadPiplineFromRecent);
+                }
+                ui.menuPipline->addAction(m_pRecentFiles->menuAction());
+            }
+        }
+    }
+}
+
+bool DontNeedADO::loadPipline(const QString& a_file)
+{
+    bool bRet = false;    
+    if (!a_file.isEmpty())
     {
         clear();
         ui.stackedWidget->setCurrentIndex(static_cast<int>(STEP_PAGES::LOG_PAGE));
-        QFile file(filename);
+        QFile file(a_file);
         if (file.open(QIODevice::ReadOnly))
         {
             QDomDocument xmlPipline;
@@ -229,9 +311,10 @@ void DontNeedADO::onLoadPipline()
                     pItem->setData(Qt::ForegroundRole, pNuget->isEnabled() ? QColor(Qt::black) : QColor(Qt::gray));
                 }
             }
+            bRet = true;
         }
     }
-    // TODO
+    return bRet;
 }
 
 void DontNeedADO::onSavePipline()
