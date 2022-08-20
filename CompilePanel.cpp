@@ -10,6 +10,10 @@ CompilePanel::CompilePanel(QWidget *parent)
 	QObject::connect(ui.lEdtConf, &QLineEdit::textChanged, this, &CompilePanel::setConfiguration);
 	QObject::connect(ui.lEdtPlatform, &QLineEdit::textChanged, this, &CompilePanel::setPlatform);
 	QObject::connect(ui.ptEdtOptions, &QPlainTextEdit::textChanged, this, &CompilePanel::setCompileFlags);
+
+	ui.cboCompiler->addItem("Visual studio 2019");
+	ui.cboCompiler->addItem("Visual studio 2017");
+	ui.cboCompiler->addItem("Visual studio 2015");
 }
 
 CompilePanel::~CompilePanel()

@@ -221,6 +221,13 @@ void DontNeedADO::onLoadPipline()
                     QListWidgetItem* pItem = createItem(STEP_PAGES::TAG_PAGE);
                     pItem->setData(Qt::ForegroundRole, pTag->isEnabled() ? QColor(Qt::black) : QColor(Qt::gray));
                 }
+
+                auto pNuget = dynamic_cast<NugetStep*>(pStep.get());
+                if (pNuget)
+                {
+                    QListWidgetItem* pItem = createItem(STEP_PAGES::NUGET_PAGE);
+                    pItem->setData(Qt::ForegroundRole, pNuget->isEnabled() ? QColor(Qt::black) : QColor(Qt::gray));
+                }
             }
         }
     }
@@ -276,6 +283,7 @@ void DontNeedADO::itemSelected()
                 break;
 
             case STEP_PAGES::NUGET_PAGE:
+                ui.pageNuget->loadStep(dynamic_cast<NugetStep*>(m_ADOPipline[iRow].get()));
                 break;
 
             case STEP_PAGES::REPLACE_PAGE:

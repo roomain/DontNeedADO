@@ -91,6 +91,12 @@ void Pipline::load(const QDomElement& a_reader)
 				pStep->load(elem);
 				m_vSteps.push_back(pStep);
 			}
+			else if (elem.tagName() == "NugetStep")
+			{
+				std::shared_ptr<NugetStep> pStep = std::make_shared<NugetStep>();
+				pStep->load(elem);
+				m_vSteps.push_back(pStep);
+			}
 		}
 	}
 }

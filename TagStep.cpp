@@ -38,7 +38,6 @@ bool TagStep::execute(ExecuteArgs& a_args)const
 	QString cmd = QString("git tag -a %1 -m \"%2\"").arg(QString::fromLatin1(m_tag)).arg(QString::fromLatin1(m_comments));
 	QProcess gitProcess;
 	gitProcess.setWorkingDirectory(QString::fromLatin1(a_args.workingDirectory + "/" + m_relDir));
-	//gitProcess.start("cmd.exe", QStringList() << "/c" << cmd);
 	gitProcess.start("git", QStringList() << "tag" << "-a" << QString::fromLatin1(m_tag) << "-m" << "\"" + QString::fromLatin1(m_comments) + "\"");
 	if (!gitProcess.waitForStarted())
 	{

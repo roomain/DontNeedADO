@@ -73,6 +73,7 @@ void CMakePanel::onChooseCompiler(int a_index)
 {
 	if (m_pStep)
 	{
+		ui.checkBox->setChecked(m_pStep->isEnabled());
 		auto varList = ui.cboCompiler->itemData(a_index, Qt::UserRole).toList();
 		m_pStep->setCompilerVers(varList[0].toString().toStdString());
 		m_pStep->setCompilerName(varList[1].toString().toStdString());
