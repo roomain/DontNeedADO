@@ -18,19 +18,7 @@ DontNeedADO::DontNeedADO(QWidget *parent)
 {
     ui.setupUi(this);
 
-    DontNeedADOApp* pApp = static_cast<DontNeedADOApp*>(qApp);
-    QStringList lastfiles = pApp->lastFiles();
-    if (lastfiles.size() > 0)
-    {
-        m_pRecentFiles = new QMenu("RecentFiles");
-        for (auto file : lastfiles)
-        {
-            auto pAct = new QAction(file);
-            m_pRecentFiles->addAction(pAct);
-            QObject::connect(pAct, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onLoadPiplineFromRecent);
-        }
-        ui.menuPipline->addAction(m_pRecentFiles->menuAction());
-    }
+    createRecentMenu();
 
     m_pProgress = new QProgressBar;
     ui.statusBar->addPermanentWidget(m_pProgress);
@@ -226,20 +214,23 @@ void DontNeedADO::onLoadPipline()
         }
         else
         {
-            QStringList lastfiles = pApp->lastFiles();
-            if (lastfiles.size() > 0)
-            {
-                m_pRecentFiles = new QMenu("RecentFiles");
-                for (auto file : lastfiles)
-                {
-                    auto pAct = new QAction(file);
-                    m_pRecentFiles->addAction(pAct);
-                    QObject::connect(pAct, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onLoadPiplineFromRecent);
-                }
-                ui.menuPipline->addAction(m_pRecentFiles->menuAction());
-            }
+            createRecentMenu();
         }
     }
+}
+
+void DontNeedADO::createRecentMenu()
+{
+    DontNeedADOApp* pApp = static_cast<DontNeedADOApp*>(qApp);
+    QStringList lastfiles = pApp->lastFiles();
+    m_pRecentFiles = new QMenu("RecentFiles");
+    for (auto file : lastfiles)
+    {
+        auto pAct = new QAction(file);
+        m_pRecentFiles->addAction(pAct);
+        QObject::connect(pAct, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onLoadPiplineFromRecent);
+    }
+    ui.menuPipline->addAction(m_pRecentFiles->menuAction());
 }
 
 bool DontNeedADO::loadPipline(const QString& a_file)

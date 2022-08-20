@@ -60,4 +60,6 @@ private:
     void onPiplineStart(int a_StepCount);
     void onPiplineUpdate(int a_step, const QString& a_message);
     void onPiplineFinished();
+
+    void createRecentMenu();
 };
