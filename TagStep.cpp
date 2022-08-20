@@ -53,6 +53,25 @@ bool TagStep::execute(ExecuteArgs& a_args)const
 	a_args.outputLog += "\n\nGIT TAG:\n" +
 		gitProcess.program() + " " + argumentStr + "\n" +
 		gitProcess.readAllStandardOutput() + "\n" + gitProcess.readAllStandardError();
+
+	//------------------------------------------------------------------------------------------------
+
+	gitProcess.start("git", QStringList() << "push" << "--tags");
+	if (!gitProcess.waitForStarted())
+	{
+		a_args.outputLog += "\n\nGIT PUSH TAG:\nNOT STARTED!\n" + gitProcess.readAllStandardError();
+		return false;
+	}
+	bOk = gitProcess.waitForFinished();
+
+	lstArgs.clear();
+	lstArgs = gitProcess.arguments();
+	argumentStr.clear();
+	std::for_each(lstArgs.begin(), lstArgs.end(), [&](const auto& arg) {argumentStr += arg + " "; });
+
+	a_args.outputLog += "\n\nGIT PUSH TAG:\n" +
+		gitProcess.program() + " " + argumentStr + "\n" +
+		gitProcess.readAllStandardOutput() + "\n" + gitProcess.readAllStandardError();
 	return bOk;
 }
 
