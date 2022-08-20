@@ -76,17 +76,27 @@ bool CMakeStep::execute(ExecuteArgs& a_args)const
 {
 	bool bRet = false;
 	QProcess cmakeProcess;
-	QString workingDir = QString::fromLatin1(a_args.workingDirectory + "/" + m_cmakeOpt[WORKING_DIR]);
+
 	cmakeProcess.setWorkingDirectory(QString::fromLatin1(a_args.workingDirectory + "/" + m_cmakeOpt[WORKING_DIR]));
-	//cmakeProcess.start("C:/Program Files/CMake/bin/CMake", QStringList() <<  cmdCMake);
+
 	cmakeProcess.start("C:/Program Files/CMake/bin/CMake", QStringList() << QString("-B %1").arg(QString::fromLatin1(m_cmakeOpt[OUT_DIR]))
 	<< QString("-T %1").arg(QString::fromLatin1(m_cmakeOpt[COMPILER_VERS])) 
 		<< QString("-A %1").arg(QString::fromLatin1(m_cmakeOpt[PLATFORM]))
 		<< QString("-G %1").arg(QString::fromLatin1(m_cmakeOpt[COMPILER_NAME])));
 	if (!cmakeProcess.waitForStarted())
+	{
+		a_args.outputLog += "\n\nCMAKE:\nNOT STARTED!\n" + cmakeProcess.readAllStandardError();
 		return false;
+	}
 	bRet = cmakeProcess.waitForFinished();
-	a_args.outputLog += "\n\nCMAKE:\n" + cmakeProcess.readAllStandardOutput() + "\n" + cmakeProcess.readAllStandardError();
+
+	auto lstArgs = cmakeProcess.arguments();
+	QString argumentStr;
+	std::for_each(lstArgs.begin(), lstArgs.end(), [&](const auto& arg) {argumentStr += arg + " "; });
+
+	a_args.outputLog += "\n\nCMAKE:\n" + 
+		cmakeProcess.program() + " " + argumentStr + "\n" +
+		cmakeProcess.readAllStandardOutput() + "\n" + cmakeProcess.readAllStandardError();
 	return bRet;
 }
 

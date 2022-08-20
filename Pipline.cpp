@@ -42,7 +42,7 @@ void Pipline::removeStep(const int a_index)
 
 void Pipline::clear()
 {
-	// TODO
+	m_vSteps.clear();
 }
 
 void Pipline::save(QXmlStreamWriter& a_writer)const
@@ -79,6 +79,18 @@ void Pipline::load(const QDomElement& a_reader)
 				pStep->load(elem);
 				m_vSteps.push_back(pStep);
 			}
+			else if (elem.tagName() == "CompileStep")
+			{
+				std::shared_ptr<CompileStep> pStep = std::make_shared<CompileStep>();
+				pStep->load(elem);
+				m_vSteps.push_back(pStep);
+			}
+			else if (elem.tagName() == "TagStep")
+			{
+				std::shared_ptr<TagStep> pStep = std::make_shared<TagStep>();
+				pStep->load(elem);
+				m_vSteps.push_back(pStep);
+			}
 		}
 	}
 }
@@ -91,7 +103,7 @@ void Pipline::execute(const bool a_dontUseTag)
 		if (m_worker)
 			m_worker->join();
 
-		m_worker = std::make_unique<std::thread>([&]()
+		m_worker = std::make_unique<std::thread>([=]()
 			{
 				ExecuteArgs args{ .workingDirectory = this->m_workingDir };
 				int iIndex = 0;

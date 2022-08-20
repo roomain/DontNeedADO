@@ -3,6 +3,7 @@
 #include <QXmlStreamWriter>
 #include <QDomElement>
 #include <qstring.h>
+#include <qfileinfo.h>
 
 
 void GitStep::setUrl(const std::string& a_url)
@@ -22,14 +23,41 @@ bool GitStep::execute(ExecuteArgs& a_args)const
 	gitProcess.setWorkingDirectory(QString::fromLatin1(a_args.workingDirectory));
 	gitProcess.start("cmd.exe" , QStringList() << "/c" << cmdGit);
 	if (!gitProcess.waitForStarted())
+	{
+		a_args.outputLog += "\n\nGIT CLONE:\nNOT STARTED!\n" + gitProcess.readAllStandardError();
 		return false;
+	}
 	bool bOk = gitProcess.waitForFinished();
-	a_args.outputLog += "\n\nGIT CLONE:\n" + gitProcess.readAllStandardOutput() + "\n" + gitProcess.readAllStandardError();
+	
+	auto lstArgs = gitProcess.arguments();
+	QString argumentStr;
+	std::for_each(lstArgs.begin(), lstArgs.end(), [&](const auto& arg) {argumentStr += arg + " "; });
+
+	a_args.outputLog += "\n\nGIT CLONE:\n" +
+		gitProcess.program() + " " + argumentStr + "\n" +
+		gitProcess.readAllStandardOutput() + "\n" + gitProcess.readAllStandardError();
+	//----------------------------------------------------------------------------------------------------------------------
+	QFileInfo info(QString::fromLatin1(m_url));
+	auto filename = info.fileName();
+	filename = filename.left(filename.indexOf('.'));
+
+	gitProcess.setWorkingDirectory(QString::fromLatin1(a_args.workingDirectory) + "/" + filename);
 	gitProcess.start("cmd.exe", QStringList() << "/c" << "git submodule update --init --recursive");
 	if (!gitProcess.waitForStarted())
+	{
+		a_args.outputLog += "\n\nGIT SUBMODULES:\nNOT STARTED!\n" + gitProcess.readAllStandardError();
 		return false;
+	}
 	bOk = gitProcess.waitForFinished();
-	a_args.outputLog += "\n\nGIT SUBMODULES:\n" + gitProcess.readAllStandardOutput() + "\n" + gitProcess.readAllStandardError();
+
+	lstArgs.clear();
+	lstArgs = gitProcess.arguments();
+	argumentStr.clear();
+	std::for_each(lstArgs.begin(), lstArgs.end(), [&](const auto& arg) {argumentStr += arg + " "; });
+
+	a_args.outputLog += "\n\nGIT SUBMODULES:\n" +
+		gitProcess.program() + " " + argumentStr + "\n" +
+		gitProcess.readAllStandardOutput() + "\n" + gitProcess.readAllStandardError();
 	return bOk;
 }
 

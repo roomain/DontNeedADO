@@ -23,6 +23,7 @@ void ReplacePanel::loadStep(ReplaceStep* const a_step)
 	m_pStep = a_step;
 	if (m_pStep)
 	{
+		ui.checkBox->setChecked(m_pStep->isEnabled());
 		for(auto token : *m_pStep)
 			addNewLine(QString::fromLatin1(token.token), QString::fromLatin1(token.filters), QString::fromLatin1(token.value));
 	}

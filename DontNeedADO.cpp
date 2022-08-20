@@ -36,7 +36,7 @@ DontNeedADO::DontNeedADO(QWidget *parent)
     QObject::connect(ui.actionLoad_pipline, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onLoadPipline);
     QObject::connect(ui.actionSave_pipline, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onSavePipline);
 
-    QObject::connect(ui.lstPipline, &QListWidget::itemSelectionChanged, this, &DontNeedADO::itemSelected);
+    QObject::connect(ui.lstPipline, &QListWidget::itemSelectionChanged, this, &DontNeedADO::itemSelected, Qt::DirectConnection);
 
     QObject::connect(ui.pageGIT, &GitClonePanel::sg_enabled, this, &DontNeedADO::onEnable);
     QObject::connect(ui.pageCMake, &CMakePanel::sg_enabled, this, &DontNeedADO::onEnable);
@@ -89,6 +89,10 @@ void DontNeedADO::executeWithoutTag()
 
 void DontNeedADO::onPiplineStart(int a_StepCount)
 {
+    ui.menuBar->setEnabled(false);
+    ui.mainToolBar->setEnabled(false);
+    ui.lstPipline->setEnabled(false);
+
     m_pProgress->setRange(0, a_StepCount - 1);
     m_pProgress->setValue(0);
 }
@@ -101,7 +105,9 @@ void DontNeedADO::onPiplineUpdate(int a_step, const QString& a_message)
 
 void DontNeedADO::onPiplineFinished()
 {
-    // TODO
+    ui.menuBar->setEnabled(true);
+    ui.mainToolBar->setEnabled(true);
+    ui.lstPipline->setEnabled(true);
 }
 
 void DontNeedADO::onClean()
@@ -131,8 +137,10 @@ void DontNeedADO::onRemoveStep()
     QListWidgetItem* pItem = ui.lstPipline->currentItem();
     if (pItem)
     {
-        m_ADOPipline.removeStep(ui.lstPipline->currentRow());
-        pItem = ui.lstPipline->takeItem(ui.lstPipline->currentRow());
+        int iRow = ui.lstPipline->currentRow();
+        pItem = ui.lstPipline->takeItem(iRow);
+        m_ADOPipline.removeStep(iRow);
+        int  iCount = ui.lstPipline->count();
         delete pItem;
     }
 }
@@ -153,6 +161,7 @@ void DontNeedADO::onNewPipline()
 
 void DontNeedADO::onLoadPipline()
 {
+    ui.tEdtLog->clear();
     auto filename = QFileDialog::getOpenFileName(this, "Load pipline", "", "Pipline (*.xml)");
     if (!filename.isEmpty())
     {
@@ -198,6 +207,20 @@ void DontNeedADO::onLoadPipline()
                     QListWidgetItem* pItem = createItem(STEP_PAGES::REPLACE_PAGE);
                     pItem->setData(Qt::ForegroundRole, pReplace->isEnabled() ? QColor(Qt::black) : QColor(Qt::gray));
                 }
+
+                auto pCompile = dynamic_cast<CompileStep*>(pStep.get());
+                if (pCompile)
+                {
+                    QListWidgetItem* pItem = createItem(STEP_PAGES::COMPILE_PAGE);
+                    pItem->setData(Qt::ForegroundRole, pCompile->isEnabled() ? QColor(Qt::black) : QColor(Qt::gray));
+                }
+
+                auto pTag = dynamic_cast<TagStep*>(pStep.get());
+                if (pTag)
+                {
+                    QListWidgetItem* pItem = createItem(STEP_PAGES::TAG_PAGE);
+                    pItem->setData(Qt::ForegroundRole, pTag->isEnabled() ? QColor(Qt::black) : QColor(Qt::gray));
+                }
             }
         }
     }
@@ -234,32 +257,38 @@ void DontNeedADO::itemSelected()
     QListWidgetItem* pItem = ui.lstPipline->currentItem();
     if (pItem)
     {
-        ui.stackedWidget->setCurrentIndex(pItem->data(Qt::UserRole).toInt());
-        switch (static_cast<STEP_PAGES>(pItem->data(Qt::UserRole).toInt()))
+        int iRow = ui.lstPipline->currentRow();
+        if (iRow < m_ADOPipline.stepCount())
         {
-        case STEP_PAGES::GIT_PAGE:
-            ui.pageGIT->loadStep(dynamic_cast<GitStep*>(m_ADOPipline[ui.lstPipline->currentRow()].get()));
-            break;
+            ui.stackedWidget->setCurrentIndex(pItem->data(Qt::UserRole).toInt());
+            switch (static_cast<STEP_PAGES>(pItem->data(Qt::UserRole).toInt()))
+            {
+            case STEP_PAGES::GIT_PAGE:
+                ui.pageGIT->loadStep(dynamic_cast<GitStep*>(m_ADOPipline[iRow].get()));
+                break;
 
-        case STEP_PAGES::CMAKE_PAGE:
-            ui.pageCMake->loadStep(dynamic_cast<CMakeStep*>(m_ADOPipline[ui.lstPipline->currentRow()].get()));
-            break;
+            case STEP_PAGES::CMAKE_PAGE:
+                ui.pageCMake->loadStep(dynamic_cast<CMakeStep*>(m_ADOPipline[iRow].get()));
+                break;
 
-        case STEP_PAGES::COMPILE_PAGE:
-            break;
+            case STEP_PAGES::COMPILE_PAGE:
+                ui.pageCompile->loadStep(dynamic_cast<CompileStep*>(m_ADOPipline[iRow].get()));
+                break;
 
-        case STEP_PAGES::NUGET_PAGE:
-            break;
+            case STEP_PAGES::NUGET_PAGE:
+                break;
 
-        case STEP_PAGES::REPLACE_PAGE:
-            ui.pageReplace->loadStep(dynamic_cast<ReplaceStep*>(m_ADOPipline[ui.lstPipline->currentRow()].get()));
-            break;
+            case STEP_PAGES::REPLACE_PAGE:
+                ui.pageReplace->loadStep(dynamic_cast<ReplaceStep*>(m_ADOPipline[iRow].get()));
+                break;
 
-        case STEP_PAGES::TAG_PAGE:
-            break;
+            case STEP_PAGES::TAG_PAGE:
+                ui.pageTag->loadStep(dynamic_cast<TagStep*>(m_ADOPipline[iRow].get()));
+                break;
 
-        default:
-            break;
+            default:
+                break;
+            }
         }
     }
 }
@@ -319,8 +348,7 @@ QListWidgetItem* DontNeedADO::createItem(const STEP_PAGES a_type)
 
 void DontNeedADO::addGitStep()
 {
-    QListWidgetItem* pItem = createItem(STEP_PAGES::GIT_PAGE);
-    
+    QListWidgetItem* pItem = createItem(STEP_PAGES::GIT_PAGE);    
     std::shared_ptr<GitStep> pStep = std::make_shared<GitStep>();
     m_ADOPipline.addStep(pStep);
     ui.lstPipline->setCurrentItem(pItem);
@@ -345,21 +373,24 @@ void DontNeedADO::addReplaceStep()
 void DontNeedADO::addCompileStep()
 {
     QListWidgetItem* pItem = createItem(STEP_PAGES::COMPILE_PAGE);
-    // TODO
+    std::shared_ptr<CompileStep> pStep = std::make_shared<CompileStep>();
+    m_ADOPipline.addStep(pStep);
     ui.lstPipline->setCurrentItem(pItem);
 }
 
 void DontNeedADO::addNugetStep()
 {
     QListWidgetItem* pItem = createItem(STEP_PAGES::NUGET_PAGE);
-    // TODO
+    std::shared_ptr<NugetStep> pStep = std::make_shared<NugetStep>();
+    m_ADOPipline.addStep(pStep);
     ui.lstPipline->setCurrentItem(pItem);
 }
 
 void DontNeedADO::addTagStep()
 {
     QListWidgetItem* pItem = createItem(STEP_PAGES::TAG_PAGE);
-    // TODO
+    std::shared_ptr<TagStep> pStep = std::make_shared<TagStep>();
+    m_ADOPipline.addStep(pStep);
     ui.lstPipline->setCurrentItem(pItem);
 }
 
