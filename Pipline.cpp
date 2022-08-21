@@ -20,6 +20,14 @@ int Pipline::stepCount()const
 	return static_cast<int>(m_vSteps.size());
 }
 
+void Pipline::moveStep(const int a_src, const int a_dst)
+{
+	auto pStep = m_vSteps[a_src];
+	int iDest = a_dst < a_src ? a_dst : a_dst - 1;
+	m_vSteps.erase(m_vSteps.begin() + a_src);
+	m_vSteps.insert(m_vSteps.begin() + iDest, pStep);
+}
+
 void Pipline::addStep(const std::shared_ptr<PiplineStep>& a_step)
 {
 	m_vSteps.push_back(a_step);

@@ -41,6 +41,8 @@ DontNeedADO::DontNeedADO(QWidget *parent)
     QObject::connect(ui.actionSave_pipline, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onSavePipline);
 
     QObject::connect(ui.lstPipline, &QListWidget::itemSelectionChanged, this, &DontNeedADO::itemSelected, Qt::DirectConnection);
+    QObject::connect(ui.lstPipline->model(), &QAbstractItemModel::rowsMoved, this, &DontNeedADO::onRowsMoved, Qt::DirectConnection);
+    // TODO
 
     QObject::connect(ui.pageGIT, &GitClonePanel::sg_enabled, this, &DontNeedADO::onEnable);
     QObject::connect(ui.pageCMake, &CMakePanel::sg_enabled, this, &DontNeedADO::onEnable);
@@ -57,6 +59,12 @@ DontNeedADO::~DontNeedADO()
 {
     //
 }
+
+void DontNeedADO::onRowsMoved(const QModelIndex& parent, int start, int end, const QModelIndex& destination, int row)
+{
+    m_ADOPipline.moveStep(start, row);
+}
+
 
 void DontNeedADO::onBrowseWorkingDir()
 {
@@ -332,6 +340,7 @@ void DontNeedADO::onSavePipline()
         }
     }
 }
+
 
 void DontNeedADO::itemSelected()
 {

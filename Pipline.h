@@ -28,6 +28,7 @@ public:
 	void save(QXmlStreamWriter& a_writer)const;
 	void load(const QDomElement& a_reader);
 	void execute(const bool a_dontUseTag);
+	void moveStep(const int a_src, const int a_dst);
 
 	using iterator = std::vector<std::shared_ptr<PiplineStep>>::iterator;
 	iterator begin() { return m_vSteps.begin(); }

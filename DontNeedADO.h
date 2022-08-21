@@ -34,6 +34,7 @@ private:
 
     void clear();
     QListWidgetItem* createItem(const STEP_PAGES a_type);
+    void onRowsMoved(const QModelIndex& parent, int start, int end, const QModelIndex& destination, int row);
 
     void onBrowseWorkingDir();
     void executePipline();
