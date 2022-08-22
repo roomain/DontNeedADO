@@ -21,6 +21,7 @@ void NugetPanel::loadStep(NugetStep* const a_step)
 		ui.checkBox->setChecked(m_pStep->isEnabled());
 		ui.lEdtDir->setText(QString::fromLatin1(m_pStep->relativePath()));
 		ui.lEdFiles->setText(QString::fromLatin1(m_pStep->files()));
+		ui.lEdtVersion->setText(QString::fromLatin1(m_pStep->version()));
 	}
 }
 
@@ -45,4 +46,10 @@ void NugetPanel::setNuspecs(const QString& a_value)
 	{
 		m_pStep->setFiles(a_value.toStdString());
 	}
+}
+
+void NugetPanel::onVersion(const QString& a_version)
+{
+	if (m_pStep)
+		m_pStep->setVersion(a_version.toStdString());
 }

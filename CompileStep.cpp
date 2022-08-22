@@ -45,22 +45,85 @@ std::string CompileStep::conpileFlags()const noexcept
 	return m_compileFlags;
 }
 
+void CompileStep::setCompiler(const COMPILER a_compiler)
+{
+	m_compiler = a_compiler;
+}
+
+CompileStep::COMPILER CompileStep::compiler()const noexcept
+{
+	return m_compiler;
+}
+
+QString CompileStep::getCompilerPath()const noexcept
+{
+	QString sRet;
+	switch (m_compiler)
+	{
+	case COMPILER::VS_2015:
+		sRet = "\"C:/Program Files (x86)/Microsoft Visual Studio/2017/Professional/MSBuild/Current/Bin/msbuild.exe\"";
+		break;
+
+	case COMPILER::VS_2017:
+		sRet = "\"C:/Program Files (x86)/Microsoft Visual Studio/2015/Professional/MSBuild/Current/Bin/msbuild.exe\"";
+		break;
+
+	case COMPILER::VS_2019:
+		sRet = "\"C:/Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/Current/Bin/msbuild.exe\"";
+		break;
+
+	default:
+		break;
+	}
+	return sRet;
+}
+QString CompileStep::getCompilerVersion()const noexcept
+{
+	QString sRet;
+	switch (m_compiler)
+	{
+	case COMPILER::VS_2015:
+		sRet = "14.0";
+		break;
+
+	case COMPILER::VS_2017:
+		sRet = "15.0";
+		break;
+
+	case COMPILER::VS_2019:
+		sRet = "16.0";
+		break;
+
+	default:
+		break;
+	}
+	return sRet;
+}
+
+
 bool CompileStep::execute(ExecuteArgs& a_args)const
 {
 	bool bRet = false;
 	QProcess buildProcess;
 	buildProcess.setWorkingDirectory(QString::fromLatin1(a_args.workingDirectory));
-	buildProcess.start("msbuild", QStringList() << QString("%1").arg(QString::fromLatin1(m_relSLNPath))
-		<< QString("/Build ") << "/v:q" << "/nologo" << QString("/p:Configuration=%1").arg(QString::fromLatin1(m_conf))
+
+	buildProcess.start(getCompilerPath(), QStringList() << QString("%1").arg(QString::fromLatin1(m_relSLNPath))
+		<< "/nologo" << "/nr:false" << "-maxcpucount" << QString("/p:platform=%1").arg(QString::fromLatin1(m_platform)) 
+		<< QString("/p:Configuration=%1").arg(QString::fromLatin1(m_conf)) << QString("/p:VisualStudioVersion=%1").arg(getCompilerVersion())
 		<< QString::fromLatin1(m_compileFlags));
+
+	auto lstArgs = buildProcess.arguments();
+	QString argumentStr;
+	std::for_each(lstArgs.begin(), lstArgs.end(), [&](const auto& arg) {argumentStr += arg + " "; });
+	QString sCmd = buildProcess.program() + " " + argumentStr;
 
 	if (!buildProcess.waitForStarted())
 	{
-		a_args.outputLog += "\n\nBUILD:\nNOT STARTED!\n" + buildProcess.readAllStandardError();
+		a_args.outputLog += "\n\nBUILD:\nNOT STARTED!\n" + sCmd + "\n" + buildProcess.readAllStandardError();
 		return false;
 	}
 	bRet = buildProcess.waitForFinished();
-	a_args.outputLog += "\n\nBUILD:\n" + buildProcess.readAllStandardOutput() + "\n" + buildProcess.readAllStandardError();
+	a_args.outputLog += "\n\nBUILD:\n" + sCmd + "\n" + buildProcess.readAllStandardOutput() + "\n" + buildProcess.readAllStandardError();
 	return bRet;
 }
 
@@ -69,6 +132,7 @@ void CompileStep::save(QXmlStreamWriter& a_writer)const
 	a_writer.writeStartElement("CompileStep");
 
 	a_writer.writeAttribute("Active", QString("%1").arg(isEnabled()));
+	a_writer.writeAttribute("Compiler", QString("%1").arg(static_cast<int>(m_compiler)));
 	a_writer.writeTextElement("Relative_path", QString::fromLatin1(m_relSLNPath));
 	a_writer.writeTextElement("Configuration", QString::fromLatin1(m_conf));
 	a_writer.writeTextElement("Platform", QString::fromLatin1(m_platform));
@@ -80,6 +144,7 @@ void CompileStep::save(QXmlStreamWriter& a_writer)const
 void CompileStep::load(const QDomElement& a_reader)
 {
 	setEnable(a_reader.attribute("Active", "1") == "1");
+	m_compiler = static_cast<COMPILER>(a_reader.attribute("Compiler", 0).toInt());
 	auto nodeList = a_reader.childNodes();
 	for (int i = 0; i < nodeList.count(); ++i)
 	{

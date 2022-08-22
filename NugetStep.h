@@ -7,9 +7,12 @@ class NugetStep : public PiplineStep
 private:
 	std::string m_relDir;
 	std::string m_files;
+	std::string m_version;
 
 public:
 	using PiplineStep::PiplineStep;
+	void setVersion(const std::string& a_vers);
+	std::string version()const noexcept;
 	void setRelativePath(const std::string& a_value);
 	std::string relativePath()const noexcept;
 	void setFiles(const std::string& a_value);

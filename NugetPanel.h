@@ -24,4 +24,5 @@ private:
 	void setEnable(bool a_bEnable);
 	void setRelativePath(const QString& a_value);
 	void setNuspecs(const QString& a_value);
+	void onVersion(const QString& a_version);
 };

@@ -26,4 +26,5 @@ private:
 	void setConfiguration(const QString& a_value);
 	void setPlatform(const QString& a_value);
 	void setCompileFlags();
+	void onCompiler(int a_index);
 };

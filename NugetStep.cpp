@@ -1,6 +1,19 @@
 #include "NugetStep.h"
 #include <QXmlStreamWriter>
 #include <QDomElement>
+#include <qprocess.h>
+
+
+
+void NugetStep::setVersion(const std::string& a_vers)
+{
+	m_version = a_vers;
+}
+
+std::string NugetStep::version()const noexcept
+{
+	return m_version;
+}
 
 
 void NugetStep::setRelativePath(const std::string& a_value)
@@ -26,7 +39,30 @@ std::string NugetStep::files()const noexcept
 bool NugetStep::execute(ExecuteArgs& a_args)const
 {
 	bool bRet = false;
-	//
+	QProcess nugetProcess;
+	QStringList lFiles = QString::fromLatin1(m_files).split(";");
+	nugetProcess.setWorkingDirectory(QString::fromLatin1(m_relDir));
+	for (auto file : lFiles)
+	{
+		nugetProcess.start("powershell", QStringList() << QString("write-NugetPackage -Package %1 -PackageVersion %2")
+			.arg(file).arg(QString::fromLatin1(m_version)));
+
+		if (!nugetProcess.waitForStarted())
+		{
+			a_args.outputLog += "\n\nNUGET STEP:\nNOT STARTED!\n" + nugetProcess.readAllStandardError();
+			return false;
+		}
+		nugetProcess.waitForFinished();
+
+		auto lstArgs = nugetProcess.arguments();
+		QString argumentStr;
+		std::for_each(lstArgs.begin(), lstArgs.end(), [&](const auto& arg) {argumentStr += arg + " "; });
+
+		a_args.outputLog += "\n\nNUGET STEP:\n" +
+			nugetProcess.program() + " " + argumentStr + "\n" +
+			nugetProcess.readAllStandardOutput() + "\n" + nugetProcess.readAllStandardError();
+	}
+
 	return bRet;
 }
 

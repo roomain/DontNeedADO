@@ -11,13 +11,21 @@ CompilePanel::CompilePanel(QWidget *parent)
 	QObject::connect(ui.lEdtPlatform, &QLineEdit::textChanged, this, &CompilePanel::setPlatform);
 	QObject::connect(ui.ptEdtOptions, &QPlainTextEdit::textChanged, this, &CompilePanel::setCompileFlags);
 
-	ui.cboCompiler->addItem("Visual studio 2019");
-	ui.cboCompiler->addItem("Visual studio 2017");
-	ui.cboCompiler->addItem("Visual studio 2015");
+	ui.cboCompiler->addItem("Visual studio 2019",static_cast<int>(CompileStep::COMPILER::VS_2019));
+	ui.cboCompiler->addItem("Visual studio 2017",static_cast<int>(CompileStep::COMPILER::VS_2017));
+	ui.cboCompiler->addItem("Visual studio 2015",static_cast<int>(CompileStep::COMPILER::VS_2015));
+	QObject::connect(ui.cboCompiler, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CompilePanel::onCompiler);
+
 }
 
 CompilePanel::~CompilePanel()
 {}
+
+void CompilePanel::onCompiler(int a_index)
+{
+	if (m_pStep)
+		m_pStep->setCompiler(static_cast<CompileStep::COMPILER>(ui.cboCompiler->itemData(a_index, Qt::UserRole).toInt()));
+}
 
 void CompilePanel::setEnable(bool a_bEnable)
 {
@@ -36,6 +44,9 @@ void CompilePanel::loadStep(CompileStep* const a_step)
 		ui.lEdtConf->setText(QString::fromLatin1(m_pStep->configuration()));
 		ui.lEdtPlatform->setText(QString::fromLatin1(m_pStep->platform()));
 		ui.ptEdtOptions->setPlainText(QString::fromLatin1(m_pStep->conpileFlags()));
+
+		ui.cboCompiler->setCurrentIndex(ui.cboCompiler->findData(static_cast<int>(m_pStep->compiler())));
+
 	}
 }
 
