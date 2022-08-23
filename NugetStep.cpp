@@ -2,6 +2,7 @@
 #include <QXmlStreamWriter>
 #include <QDomElement>
 #include <qprocess.h>
+#include <QDirIterator>
 
 
 
@@ -41,11 +42,19 @@ bool NugetStep::execute(ExecuteArgs& a_args)const
 	bool bRet = false;
 	QProcess nugetProcess;
 	QStringList lFiles = QString::fromLatin1(m_files).split(";");
-	nugetProcess.setWorkingDirectory(QString::fromLatin1(m_relDir));
+
+	// mise en forme path:
+	QString path = QString::fromLatin1(a_args.workingDirectory).replace('\\', '/');
+	QString relPath = QString::fromLatin1(m_relDir).replace('\\', '/');
+	//nugetProcess.setWorkingDirectory(QString::fromLatin1(m_relDir));
 	for (auto file : lFiles)
 	{
+		
+
+		QString absFile = (path.endsWith('/') ? path : path + "/") + (relPath.endsWith('/') ? relPath : relPath + "/") + file;
+
 		nugetProcess.start("powershell", QStringList() << "-Command" << QString("write-NugetPackage -Package %1 -PackageVersion %2")
-			.arg(file).arg(QString::fromLatin1(m_version)));
+			.arg(absFile).arg(QString::fromLatin1(m_version)));
 
 		auto lstArgs = nugetProcess.arguments();
 		QString argumentStr;
@@ -66,6 +75,25 @@ bool NugetStep::execute(ExecuteArgs& a_args)const
 			nugetProcess.readAllStandardOutput() + "\n" + nugetProcess.readAllStandardError();
 	}
 
+	// move files
+	a_args.outputLog += "\nMOVE FILES:\n";
+	QString newDir = (path.endsWith('/') ? path : path + "/") + (relPath.endsWith('/') ? relPath : relPath + "/");
+	QDirIterator iter("", QStringList() << "*.nupkg",
+		QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+	while (iter.hasNext())
+	{
+		QString path = iter.next();
+		QFileInfo dirInfo(path);
+		if (dirInfo.isFile())
+		{
+			QFile file(path);
+			file.copy(newDir + dirInfo.fileName());
+			file.remove();
+			a_args.outputLog += path + " -> " + newDir + dirInfo.fileName();
+		}
+	}
+
+
 	return bRet;
 }
 
@@ -73,6 +101,7 @@ void NugetStep::save(QXmlStreamWriter& a_writer)const
 {
 	a_writer.writeStartElement("NugetStep");
 	a_writer.writeAttribute("Active", QString("%1").arg(isEnabled()));
+	a_writer.writeAttribute("Version", QString("%1").arg(QString::fromLatin1(m_version)));
 	a_writer.writeTextElement("Relative_path", QString::fromLatin1(m_relDir));
 	a_writer.writeTextElement("Nuspecs", QString::fromLatin1(m_files));
 	a_writer.writeEndElement();
@@ -81,6 +110,7 @@ void NugetStep::save(QXmlStreamWriter& a_writer)const
 void NugetStep::load(const QDomElement& a_reader)
 {
 	setEnable(a_reader.attribute("Active", "1") == "1");
+	m_version = a_reader.attribute("Version").toStdString();
 	auto nodeList = a_reader.childNodes();
 	for (int i = 0; i < nodeList.count(); ++i)
 	{

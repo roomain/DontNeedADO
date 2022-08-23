@@ -8,6 +8,7 @@ NugetPanel::NugetPanel(QWidget *parent)
 	QObject::connect(ui.checkBox, &QCheckBox::toggled, this, &NugetPanel::setEnable);
 	QObject::connect(ui.lEdtDir, &QLineEdit::textChanged, this, &NugetPanel::setRelativePath);
 	QObject::connect(ui.lEdFiles, &QLineEdit::textChanged, this, &NugetPanel::setNuspecs);
+	QObject::connect(ui.lEdtVersion, &QLineEdit::textChanged, this, &NugetPanel::onVersion);
 }
 
 NugetPanel::~NugetPanel()

@@ -129,16 +129,25 @@ bool CMakeStep::execute(ExecuteArgs& a_args)const
 
 	if (m_bUseCompiler)
 	{
-		cmakeProcess.start(genCmakePath(), QStringList() << QString("-B %1").arg(QString::fromLatin1(m_cmakeOpt[OUT_DIR]))
+		/*cmakeProcess.start(genCmakePath(), QStringList() << QString("-B %1").arg(QString::fromLatin1(m_cmakeOpt[OUT_DIR]))
 			<< QString("-T %1").arg(QString::fromLatin1(m_cmakeOpt[COMPILER_VERS]))
 			<< QString("-A %1").arg(QString::fromLatin1(m_cmakeOpt[PLATFORM]))
-			<< QString(m_bUseQuote ? "-G \"%1\"" : "-G %1").arg(QString::fromLatin1(m_cmakeOpt[COMPILER_NAME])));
+			<< QString(m_bUseQuote ? "-G \"%1\"" : "-G %1").arg(QString::fromLatin1(m_cmakeOpt[COMPILER_NAME])));*/
+
+		cmakeProcess.start(genCmakePath(), QStringList() << "-B" << QString::fromLatin1(m_cmakeOpt[OUT_DIR])
+			<< "-T" << QString::fromLatin1(m_cmakeOpt[COMPILER_VERS])
+			<< "-A" << QString::fromLatin1(m_cmakeOpt[PLATFORM])
+			<< "-G" << QString(m_bUseQuote ? "\"%1\"" : "%1").arg(QString::fromLatin1(m_cmakeOpt[COMPILER_NAME])));
 	}
 	else
 	{
-		cmakeProcess.start(genCmakePath(), QStringList() << QString("-B %1").arg(QString::fromLatin1(m_cmakeOpt[OUT_DIR]))
+		cmakeProcess.start(genCmakePath(), QStringList() << "-B" << QString::fromLatin1(m_cmakeOpt[OUT_DIR])
+			<< "-T" << QString::fromLatin1(m_cmakeOpt[COMPILER_VERS])
+			<< "-A" << QString::fromLatin1(m_cmakeOpt[PLATFORM]));
+
+		/*cmakeProcess.start(genCmakePath(), QStringList() << QString("-B %1").arg(QString::fromLatin1(m_cmakeOpt[OUT_DIR]))
 			<< QString("-T %1").arg(QString::fromLatin1(m_cmakeOpt[COMPILER_VERS]))
-			<< QString("-A %1").arg(QString::fromLatin1(m_cmakeOpt[PLATFORM])));
+			<< QString("-A %1").arg(QString::fromLatin1(m_cmakeOpt[PLATFORM])));*/
 	}
 
 	

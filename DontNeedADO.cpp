@@ -49,6 +49,8 @@ DontNeedADO::DontNeedADO(QWidget *parent)
     QObject::connect(ui.pageGIT, &GitClonePanel::sg_enabled, this, &DontNeedADO::onEnable);
     QObject::connect(ui.pageCMake, &CMakePanel::sg_enabled, this, &DontNeedADO::onEnable);
     QObject::connect(ui.pageReplace, &ReplacePanel::sg_enabled, this, &DontNeedADO::onEnable);
+    QObject::connect(ui.pageCompile, &CompilePanel::sg_enabled, this, &DontNeedADO::onEnable);
+    QObject::connect(ui.pageNuget, &NugetPanel::sg_enabled, this, &DontNeedADO::onEnable);
 
     ui.stackedWidget->setCurrentIndex(static_cast<int>(STEP_PAGES::LOG_PAGE));
 

@@ -51,7 +51,7 @@ bool ReplaceStep::execute(ExecuteArgs& a_args)const
 {
 	bool bRet = false;
 
-	a_args.outputLog += "\nREPLACE:";
+	a_args.outputLog += "\nREPLACE:\n";
 	for (const auto& token : m_vTokens)
 	{
 		QString filter = QString::fromLatin1(token.filters);
@@ -70,10 +70,12 @@ bool ReplaceStep::execute(ExecuteArgs& a_args)const
 				{
 					QByteArray data = file.readAll();
 					data.replace(QByteArray(token.token.c_str()), QByteArray(token.value.c_str()));
-					file.seek(0);
+					file.reset();
+					file.resize(0);
 					file.write(data);
+					file.flush();
 					file.close();
-					a_args.outputLog += path + " : " + QString::fromLatin1(token.token) + " -> " + QString::fromLatin1(token.value);
+					a_args.outputLog += path + " : " + QString::fromLatin1(token.token) + " -> " + QString::fromLatin1(token.value) + "\n";
 				}
 			}
 		}
@@ -83,7 +85,7 @@ bool ReplaceStep::execute(ExecuteArgs& a_args)const
 	{
 		QStringList versionSplitted = QString::fromLatin1(m_version).split('.');
 
-		a_args.outputLog += "\nVERSIONNING:";
+		a_args.outputLog += "\nVERSIONING:\n";
 		QDirIterator iter(QString::fromLatin1(a_args.workingDirectory), QStringList() << "*.rc",
 			QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
 		while (iter.hasNext())
@@ -101,9 +103,20 @@ bool ReplaceStep::execute(ExecuteArgs& a_args)const
 					while (!stream.atEnd())
 					{
 						line = stream.readLine();
-						if (line.startsWith("FILEVERSION"))
+						if (line.indexOf("FILEVERSION") >= 0)
 						{
-							line = "FILEVERSION ";
+							line = line.left(line.indexOf("FILEVERSION"));
+							line += "FILEVERSION ";
+							for (int i = 0; i < versionSplitted.size() - 1; ++i)
+							{
+								line += versionSplitted[i] + ", ";
+							}
+							line += versionSplitted.last();
+						}
+						else if (line.indexOf("PRODUCTVERSION") >= 0)
+						{
+							line = line.left(line.indexOf("PRODUCTVERSION"));
+							line += "PRODUCTVERSION ";
 							for (int i = 0; i < versionSplitted.size() - 1; ++i)
 							{
 								line += versionSplitted[i] + ", ";
@@ -116,11 +129,18 @@ bool ReplaceStep::execute(ExecuteArgs& a_args)const
 							line = line.left(iIndex);
 							line += "VALUE \"FileVersion\", \"" + QString::fromLatin1(m_version) + "\"";
 						}
+						else if (line.contains("VALUE \"ProductVersion\""))
+						{
+							int iIndex = line.indexOf("VALUE");
+							line = line.left(iIndex);
+							line += "VALUE \"ProductVersion\", \"" + QString::fromLatin1(m_version) + "\"";
+						}
 						line += "\n";
 						data.append(line.toStdString().c_str());
 					}
 
-					file.seek(0);
+					file.reset();
+					file.resize(0);
 					file.write(data);
 					file.close();
 					a_args.outputLog += path + " : " + QString::fromLatin1(m_version);
@@ -157,7 +177,8 @@ bool ReplaceStep::execute(ExecuteArgs& a_args)const
 						data.append(line.toStdString().c_str());
 					}
 
-					file.seek(0);
+					file.reset();
+					file.resize(0);
 					file.write(data);
 					file.close();
 					a_args.outputLog += path + " : " + QString::fromLatin1(m_version);
@@ -173,6 +194,8 @@ void ReplaceStep::save(QXmlStreamWriter& a_writer)const
 {
 	a_writer.writeStartElement("ReplaceStep");
 	a_writer.writeAttribute("Active", QString("%1").arg(isEnabled()));
+	a_writer.writeAttribute("Version", QString("%1").arg(QString::fromLatin1(m_version)));
+	a_writer.writeAttribute("Version_dll", QString("%1").arg(m_bEnableVersion));
 	a_writer.writeAttribute("TokenCount", QString("%1").arg(m_vTokens.size()));
 	for (const auto& token : m_vTokens)
 	{
@@ -188,6 +211,8 @@ void ReplaceStep::save(QXmlStreamWriter& a_writer)const
 void ReplaceStep::load(const QDomElement& a_reader)
 {
 	setEnable(a_reader.attribute("Active", "1") == "1");
+	m_bEnableVersion = a_reader.attribute("Version_dll", "1") == "1";
+	m_version = a_reader.attribute("Version").toStdString();
 	auto nodeList = a_reader.childNodes();
 	for (int i = 0; i < nodeList.count(); ++i)
 	{
