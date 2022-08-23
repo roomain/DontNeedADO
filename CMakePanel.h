@@ -27,4 +27,6 @@ private:
 	void onCheckConf(bool a_check);
 	void onWorkingDir(const QString& a_path);
 	void onOutputDir(const QString& a_path);
+	void onUseQuote(const bool a_enable);
+	void onUseCompilerName(const bool a_enable);
 };

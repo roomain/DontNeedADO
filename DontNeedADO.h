@@ -63,4 +63,6 @@ private:
     void onPiplineFinished();
 
     void createRecentMenu();
+    void resetRecentMenu(const QString& a_newFile);
+    void onConfiguration();
 };

@@ -2,6 +2,7 @@
 #include <qprocess.h>
 #include <QXmlStreamWriter>
 #include <QDomElement>
+#include "DontNeedADOApp.h"
 
 
 CMakeStep::CMakeStep()
@@ -38,6 +39,26 @@ void CMakeStep::setCompilerName(const std::string& a_value)
 	m_cmakeOpt[COMPILER_NAME] = a_value;
 }
 
+void CMakeStep::setUseQuotes(const bool a_use)
+{
+	m_bUseQuote = a_use;
+}
+
+
+void CMakeStep::setUseCompilerName(const bool a_use)
+{
+	m_bUseCompiler = a_use;
+}
+
+bool CMakeStep::useCompilerName() const noexcept
+{
+	return m_bUseCompiler;
+}
+
+bool CMakeStep::useQuotes() const noexcept
+{
+	return m_bUseQuote;
+}
 
 std::string CMakeStep::workingDir()const noexcept
 {
@@ -64,12 +85,39 @@ std::string CMakeStep::compilerName()const noexcept
 	return m_cmakeOpt[COMPILER_NAME];
 }
 
+
+QString CMakeStep::genCmakePath()const noexcept
+{
+	DontNeedADOApp* pApp = static_cast<DontNeedADOApp*>(qApp);
+	QString cmakePath = pApp->cmakePath();
+	if (cmakePath.isEmpty())
+	{
+		return "CMake";
+	}
+	else
+	{
+		cmakePath = cmakePath.replace('\\', '/');
+		return QString("%1/cmake.exe").arg(cmakePath);
+	}
+}
+
 QString CMakeStep::genCmd()const noexcept
 {
-	return QString("\"C:/Program Files/CMake/bin/CMake\" -B \"%1\" -T %2 -A %3 -G \"%4\"").arg(QString::fromLatin1(m_cmakeOpt[OUT_DIR]))
-		.arg(QString::fromLatin1(m_cmakeOpt[COMPILER_VERS]))
-		.arg(QString::fromLatin1(m_cmakeOpt[PLATFORM]))
-		.arg(QString::fromLatin1(m_cmakeOpt[COMPILER_NAME]));
+	QString cmakePath = genCmakePath();
+
+	if (m_bUseCompiler)
+	{
+		return QString("\"%5\" -B \"%1\" -T %2 -A %3 -G \"%4\"").arg(QString::fromLatin1(m_cmakeOpt[OUT_DIR]))
+			.arg(QString::fromLatin1(m_cmakeOpt[COMPILER_VERS]))
+			.arg(QString::fromLatin1(m_cmakeOpt[PLATFORM]))
+			.arg(QString::fromLatin1(m_cmakeOpt[COMPILER_NAME])).arg(cmakePath);
+	}
+	else
+	{
+		return QString("\"%4\" -B \"%1\" -T %2 -A %3 ").arg(QString::fromLatin1(m_cmakeOpt[OUT_DIR]))
+			.arg(QString::fromLatin1(m_cmakeOpt[COMPILER_VERS]))
+			.arg(QString::fromLatin1(m_cmakeOpt[PLATFORM])).arg(cmakePath);;
+	}
 }
 
 bool CMakeStep::execute(ExecuteArgs& a_args)const
@@ -79,22 +127,36 @@ bool CMakeStep::execute(ExecuteArgs& a_args)const
 
 	cmakeProcess.setWorkingDirectory(QString::fromLatin1(a_args.workingDirectory + "/" + m_cmakeOpt[WORKING_DIR]));
 
-	cmakeProcess.start("C:/Program Files/CMake/bin/CMake", QStringList() << QString("-B %1").arg(QString::fromLatin1(m_cmakeOpt[OUT_DIR]))
-	<< QString("-T %1").arg(QString::fromLatin1(m_cmakeOpt[COMPILER_VERS])) 
-		<< QString("-A %1").arg(QString::fromLatin1(m_cmakeOpt[PLATFORM]))
-		<< QString("-G %1").arg(QString::fromLatin1(m_cmakeOpt[COMPILER_NAME])));
-	if (!cmakeProcess.waitForStarted())
+	if (m_bUseCompiler)
 	{
-		a_args.outputLog += "\n\nCMAKE:\nNOT STARTED!\n" + cmakeProcess.readAllStandardError();
-		return false;
+		cmakeProcess.start(genCmakePath(), QStringList() << QString("-B %1").arg(QString::fromLatin1(m_cmakeOpt[OUT_DIR]))
+			<< QString("-T %1").arg(QString::fromLatin1(m_cmakeOpt[COMPILER_VERS]))
+			<< QString("-A %1").arg(QString::fromLatin1(m_cmakeOpt[PLATFORM]))
+			<< QString(m_bUseQuote ? "-G \"%1\"" : "-G %1").arg(QString::fromLatin1(m_cmakeOpt[COMPILER_NAME])));
 	}
-	bRet = cmakeProcess.waitForFinished();
+	else
+	{
+		cmakeProcess.start(genCmakePath(), QStringList() << QString("-B %1").arg(QString::fromLatin1(m_cmakeOpt[OUT_DIR]))
+			<< QString("-T %1").arg(QString::fromLatin1(m_cmakeOpt[COMPILER_VERS]))
+			<< QString("-A %1").arg(QString::fromLatin1(m_cmakeOpt[PLATFORM])));
+	}
+
+	
 
 	auto lstArgs = cmakeProcess.arguments();
 	QString argumentStr;
 	std::for_each(lstArgs.begin(), lstArgs.end(), [&](const auto& arg) {argumentStr += arg + " "; });
 
-	a_args.outputLog += "\n\nCMAKE:" + 
+	if (!cmakeProcess.waitForStarted())
+	{
+		a_args.outputLog += "\n\nCMAKE:\n" + cmakeProcess.program() + " " + argumentStr + "\nNOT STARTED!\n" + cmakeProcess.readAllStandardError();
+		return false;
+	}
+	bRet = cmakeProcess.waitForFinished();
+
+	
+
+	a_args.outputLog += "\n\nCMAKE:\n" + 
 		cmakeProcess.program() + " " + argumentStr + "\n" +
 		cmakeProcess.readAllStandardOutput() + "\n" + cmakeProcess.readAllStandardError();
 	return bRet;
@@ -104,6 +166,8 @@ void CMakeStep::save(QXmlStreamWriter& a_writer)const
 {
 	a_writer.writeStartElement("CMakeStep");
 	a_writer.writeAttribute("Active", QString("%1").arg(isEnabled()));
+	a_writer.writeAttribute("Use_quote", QString("%1").arg(m_bUseQuote));
+	a_writer.writeAttribute("Use_compiler_name", QString("%1").arg(m_bUseCompiler));
 	a_writer.writeTextElement("Working_directory",QString::fromLatin1(m_cmakeOpt[WORKING_DIR]));
 	a_writer.writeTextElement("Output_directory", QString::fromLatin1(m_cmakeOpt[OUT_DIR]));
 	a_writer.writeTextElement("Compiler_vers", QString::fromLatin1(m_cmakeOpt[COMPILER_VERS]));
@@ -115,6 +179,8 @@ void CMakeStep::save(QXmlStreamWriter& a_writer)const
 void CMakeStep::load(const QDomElement& a_reader)
 {
 	setEnable(a_reader.attribute("Active", "1") == "1");
+	m_bUseQuote = a_reader.attribute("Use_quote", "0") == "1";
+	m_bUseCompiler = a_reader.attribute("Use_compiler_name", "1") == "1";
 	auto nodeList = a_reader.childNodes();
 	for (int i = 0; i < nodeList.count(); ++i)
 	{

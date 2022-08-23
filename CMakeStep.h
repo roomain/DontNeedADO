@@ -16,6 +16,8 @@ private:
 		OPT_COUNT
 	};
 	std::string m_cmakeOpt[OPT_COUNT];
+	bool m_bUseQuote = false;
+	bool m_bUseCompiler = true;
 
 public:
 	CMakeStep();
@@ -24,6 +26,10 @@ public:
 	void setCompilerVers(const std::string& a_value);
 	void setPlatform(const std::string& a_value);
 	void setCompilerName(const std::string& a_value);
+	void setUseQuotes(const bool a_use);
+	bool useQuotes() const noexcept;
+	void setUseCompilerName(const bool a_use);
+	bool useCompilerName() const noexcept;
 
 	std::string workingDir()const noexcept;
 	std::string outDir()const noexcept;
@@ -35,5 +41,6 @@ public:
 	void save(QXmlStreamWriter& a_writer)const final;
 	void load(const QDomElement& a_reader) final;
 	QString genCmd()const noexcept;
+	QString genCmakePath()const noexcept;
 };
 

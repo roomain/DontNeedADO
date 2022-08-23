@@ -115,7 +115,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="lEdtWorkingDir"/>
+       <widget class="QLineEdit" name="lEdtWorkingDir">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="pBtnBrowse">
@@ -158,7 +162,14 @@
     <addaction name="actionLoad_pipline"/>
     <addaction name="actionSave_pipline"/>
    </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionConfiguration"/>
+   </widget>
    <addaction name="menuPipline"/>
+   <addaction name="menuEdit"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -262,6 +273,11 @@
    </property>
    <property name="text">
     <string>Clean</string>
+   </property>
+  </action>
+  <action name="actionConfiguration">
+   <property name="text">
+    <string>Configuration</string>
    </property>
   </action>
  </widget>

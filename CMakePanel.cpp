@@ -8,6 +8,8 @@ CMakePanel::CMakePanel(QWidget *parent)
 	QObject::connect(ui.lEdCMakeList, &QLineEdit::textChanged, this, &CMakePanel::onWorkingDir);
 	QObject::connect(ui.lEdOutputDir, &QLineEdit::textChanged, this, &CMakePanel::onOutputDir);
 	QObject::connect(ui.checkBox, &QCheckBox::toggled, this, &CMakePanel::setEnable);
+	QObject::connect(ui.chBxQuote, &QCheckBox::toggled, this, &CMakePanel::onUseQuote);
+	QObject::connect(ui.chBxCompilerName, &QCheckBox::toggled, this, &CMakePanel::onUseCompilerName);
 	QObject::connect(ui.cboCompiler, &QComboBox::currentIndexChanged, this, &CMakePanel::onChooseCompiler);
 	QObject::connect(ui.rBtnWin32, &QRadioButton::toggled, this, &CMakePanel::onCheckConf);
 	QObject::connect(ui.rBtnX86, &QRadioButton::toggled, this, &CMakePanel::onCheckConf);
@@ -31,6 +33,9 @@ void CMakePanel::loadStep(CMakeStep* const a_step)
 	{
 		ui.lEdOutputDir->setText(QString::fromLatin1(m_pStep->outDir()));
 		ui.lEdCMakeList->setText(QString::fromLatin1(m_pStep->workingDir()));
+		ui.checkBox->setChecked(m_pStep->isEnabled());
+		ui.chBxQuote->setChecked(m_pStep->useQuotes());
+		ui.chBxCompilerName->setChecked(m_pStep->useCompilerName());
 
 		auto strPlatform = m_pStep->platform();
 		if (strPlatform == "Win32")
@@ -122,6 +127,28 @@ void CMakePanel::onOutputDir(const QString& a_path)
 	if (m_pStep)
 	{
 		m_pStep->setOutDir(a_path.toStdString());
+		ui.textEdit->clear();
+		ui.textEdit->setPlainText(m_pStep->genCmd());
+	}
+}
+
+void CMakePanel::onUseQuote(const bool a_enable)
+{
+	if (m_pStep)
+	{
+		m_pStep->setUseQuotes(a_enable);
+		ui.textEdit->clear();
+		ui.textEdit->setPlainText(m_pStep->genCmd());
+	}
+}
+
+void CMakePanel::onUseCompilerName(const bool a_enable)
+{
+	if (m_pStep)
+	{
+		m_pStep->setUseCompilerName(a_enable);
+		ui.cboCompiler->setEnabled(a_enable);
+		ui.label->setEnabled(a_enable);
 		ui.textEdit->clear();
 		ui.textEdit->setPlainText(m_pStep->genCmd());
 	}

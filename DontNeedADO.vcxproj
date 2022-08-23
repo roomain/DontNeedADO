@@ -99,7 +99,7 @@
     <ClCompile Include="CMakeStep.cpp" />
     <ClCompile Include="CompilePanel.cpp" />
     <ClCompile Include="CompileStep.cpp" />
-    <ClCompile Include="ConfigurationPanel.cpp" />
+    <ClCompile Include="ConfigDialog.cpp" />
     <ClCompile Include="DontNeedADOApp.cpp" />
     <ClCompile Include="GitStep.cpp" />
     <ClCompile Include="NugetPanel.cpp" />
@@ -113,7 +113,7 @@
     <QtRcc Include="DontNeedADO.qrc" />
     <QtUic Include="CMakePanel.ui" />
     <QtUic Include="CompilePanel.ui" />
-    <QtUic Include="ConfigurationPanel.ui" />
+    <QtUic Include="ConfigDialog.ui" />
     <QtUic Include="DontNeedADO.ui" />
     <QtMoc Include="DontNeedADO.h" />
     <ClCompile Include="DontNeedADO.cpp" />
@@ -143,14 +143,22 @@
     <ClInclude Include="CMakeStep.h" />
     <QtMoc Include="CompilePanel.h" />
     <ClInclude Include="CompileStep.h" />
-    <QtMoc Include="ConfigurationPanel.h" />
     <QtMoc Include="DontNeedADOApp.h" />
+    <QtMoc Include="ConfigDialog.h" />
     <ClInclude Include="GitStep.h" />
     <ClInclude Include="NugetStep.h" />
     <QtMoc Include="Pipline.h" />
     <ClInclude Include="PiplineStep.h" />
     <ClInclude Include="ReplaceStep.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="TagStep.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="dontNeedADO.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\ado.jpg" />
+    <Image Include="resources\dontNeedADO.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

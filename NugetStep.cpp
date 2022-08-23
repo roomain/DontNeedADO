@@ -44,19 +44,22 @@ bool NugetStep::execute(ExecuteArgs& a_args)const
 	nugetProcess.setWorkingDirectory(QString::fromLatin1(m_relDir));
 	for (auto file : lFiles)
 	{
-		nugetProcess.start("powershell", QStringList() << QString("write-NugetPackage -Package %1 -PackageVersion %2")
+		nugetProcess.start("powershell", QStringList() << "-Command" << QString("write-NugetPackage -Package %1 -PackageVersion %2")
 			.arg(file).arg(QString::fromLatin1(m_version)));
-
-		if (!nugetProcess.waitForStarted())
-		{
-			a_args.outputLog += "\n\nNUGET STEP:\nNOT STARTED!\n" + nugetProcess.readAllStandardError();
-			return false;
-		}
-		nugetProcess.waitForFinished();
 
 		auto lstArgs = nugetProcess.arguments();
 		QString argumentStr;
 		std::for_each(lstArgs.begin(), lstArgs.end(), [&](const auto& arg) {argumentStr += arg + " "; });
+
+		if (!nugetProcess.waitForStarted())
+		{
+			a_args.outputLog += "\n\nNUGET STEP:\n" +
+				nugetProcess.program() + " " + argumentStr + "\n" + "NOT STARTED!\n" + nugetProcess.readAllStandardError();
+			return false;
+		}
+		nugetProcess.waitForFinished();
+
+		
 
 		a_args.outputLog += "\n\nNUGET STEP:\n" +
 			nugetProcess.program() + " " + argumentStr + "\n" +

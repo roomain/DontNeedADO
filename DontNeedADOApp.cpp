@@ -46,3 +46,23 @@ QStringList DontNeedADOApp::lastFiles()const noexcept
 	lst.removeAll("");
 	return lst;
 }
+
+void DontNeedADOApp::setCMakePath(const QString& a_path)
+{
+	m_appSettings.setValue("cmake_directory", a_path);
+}
+
+QString DontNeedADOApp::cmakePath()
+{
+	return m_appSettings.value("cmake_directory").toString();
+}
+
+void DontNeedADOApp::setNugetPath(const QString& a_path)
+{
+	m_appSettings.setValue("nuget_directory", a_path);
+}
+
+QString DontNeedADOApp::nugetPath()
+{
+	return m_appSettings.value("nuget_directory").toString();
+}

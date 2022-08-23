@@ -12,6 +12,7 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include "DontNeedADOApp.h"
+#include "ConfigDialog.h"
 
 DontNeedADO::DontNeedADO(QWidget *parent)
     : QMainWindow(parent), m_pRecentFiles{ nullptr }
@@ -39,6 +40,7 @@ DontNeedADO::DontNeedADO(QWidget *parent)
     QObject::connect(ui.actionNew_pipline, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onNewPipline);
     QObject::connect(ui.actionLoad_pipline, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onLoadPipline);
     QObject::connect(ui.actionSave_pipline, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onSavePipline);
+    QObject::connect(ui.actionConfiguration, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onConfiguration);
 
     QObject::connect(ui.lstPipline, &QListWidget::itemSelectionChanged, this, &DontNeedADO::itemSelected, Qt::DirectConnection);
     QObject::connect(ui.lstPipline->model(), &QAbstractItemModel::rowsMoved, this, &DontNeedADO::onRowsMoved, Qt::DirectConnection);
@@ -58,6 +60,12 @@ DontNeedADO::DontNeedADO(QWidget *parent)
 DontNeedADO::~DontNeedADO()
 {
     //
+}
+
+void DontNeedADO::onConfiguration()
+{
+    ConfigDialog conf(this);
+    conf.exec();
 }
 
 void DontNeedADO::onRowsMoved(const QModelIndex& parent, int start, int end, const QModelIndex& destination, int row)
@@ -168,7 +176,6 @@ void DontNeedADO::onNewPipline()
     clear();
     ui.stackedWidget->setCurrentIndex(static_cast<int>(STEP_PAGES::LOG_PAGE));
     ui.tEdtLog->clear();
-    // TODO
 }
 
 
@@ -177,14 +184,7 @@ void DontNeedADO::onLoadPiplineFromRecent()
     QAction* pAct = static_cast<QAction*>(sender());
     if (loadPipline(pAct->text()))
     {
-        DontNeedADOApp* pApp = static_cast<DontNeedADOApp*>(qApp);
-        pApp->removeFile(pAct->text());
-        pApp->addLastFile(pAct->text());
-        if (m_pRecentFiles)
-        {
-            m_pRecentFiles->removeAction(pAct);
-            m_pRecentFiles->addAction(pAct);
-        }
+        resetRecentMenu(pAct->text());
     }
 }
 
@@ -194,36 +194,7 @@ void DontNeedADO::onLoadPipline()
     auto filename = QFileDialog::getOpenFileName(this, "Load pipline", "", "Pipline (*.xml)");
     if (loadPipline(filename))
     {
-        DontNeedADOApp* pApp = static_cast<DontNeedADOApp*>(qApp);
-        pApp->removeFile(filename);
-        pApp->addLastFile(filename);
-        if (m_pRecentFiles)
-        {
-            auto lAct = m_pRecentFiles->actions();
-            int indexAct = -1;
-            for (int i = 0; i < lAct.size() && indexAct < 0; ++i)
-            {
-                if (lAct[i]->text() == filename)
-                    indexAct = i;
-            }
-
-            if (indexAct >= 0)
-            {
-                auto pAct = lAct[indexAct];
-                m_pRecentFiles->removeAction(pAct);
-                m_pRecentFiles->addAction(pAct);
-            }
-            else
-            {
-                auto pAct = new QAction(filename);
-                m_pRecentFiles->addAction(pAct);
-                QObject::connect(pAct, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onLoadPiplineFromRecent);
-            }
-        }
-        else
-        {
-            createRecentMenu();
-        }
+        resetRecentMenu(filename);
     }
 }
 
@@ -231,14 +202,27 @@ void DontNeedADO::createRecentMenu()
 {
     DontNeedADOApp* pApp = static_cast<DontNeedADOApp*>(qApp);
     QStringList lastfiles = pApp->lastFiles();
-    m_pRecentFiles = new QMenu("RecentFiles");
-    for (auto file : lastfiles)
+    if (!lastfiles.isEmpty())
     {
-        auto pAct = new QAction(file);
-        m_pRecentFiles->addAction(pAct);
-        QObject::connect(pAct, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onLoadPiplineFromRecent);
+        if(m_pRecentFiles == nullptr)
+            m_pRecentFiles = new QMenu("RecentFiles");
+        m_pRecentFiles->clear();
+        std::for_each(lastfiles.rbegin(), lastfiles.rend(), [&](auto file)
+            {
+                auto pAct = new QAction(file);
+                m_pRecentFiles->addAction(pAct);
+                QObject::connect(pAct, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onLoadPiplineFromRecent);
+            });
+        ui.menuPipline->addAction(m_pRecentFiles->menuAction());
     }
-    ui.menuPipline->addAction(m_pRecentFiles->menuAction());
+}
+
+void DontNeedADO::resetRecentMenu(const QString& a_newFile)
+{
+    DontNeedADOApp* pApp = static_cast<DontNeedADOApp*>(qApp);
+    pApp->removeFile(a_newFile);
+    pApp->addLastFile(a_newFile);
+    createRecentMenu();
 }
 
 bool DontNeedADO::loadPipline(const QString& a_file)
@@ -337,6 +321,8 @@ void DontNeedADO::onSavePipline()
             writer.writeEndElement();
             writer.writeEndDocument();
             file.close();
+
+            resetRecentMenu(filename);
         }
     }
 }

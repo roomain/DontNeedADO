@@ -16,5 +16,10 @@ public:
 	void removeFile(const QString& a_file);
 	void addLastFile(const QString& a_file);
 	QStringList lastFiles()const noexcept;
+
+	void setCMakePath(const QString& a_path);
+	QString cmakePath();
+	void setNugetPath(const QString& a_path);
+	QString nugetPath();
 };
 
