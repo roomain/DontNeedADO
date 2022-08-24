@@ -32,6 +32,9 @@
     </property>
     <item row="3" column="0">
      <widget class="QPushButton" name="pBtnExecutePiplineWithoutTag">
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Execute pipline ignoring the tag steps&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
       <property name="text">
        <string>Execute Pipline without tag</string>
       </property>
@@ -100,6 +103,9 @@
     </item>
     <item row="3" column="1">
      <widget class="QPushButton" name="pBtnExecutePipline">
+      <property name="toolTip">
+       <string>Execute the pipline</string>
+      </property>
       <property name="text">
        <string>Execute Pipline</string>
       </property>
@@ -116,6 +122,9 @@
       </item>
       <item>
        <widget class="QLineEdit" name="lEdtWorkingDir">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Working directory.&lt;/p&gt;&lt;p&gt;Directory where git project will be cloned&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="readOnly">
          <bool>true</bool>
         </property>
@@ -129,6 +138,9 @@
           <height>16777215</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>Browse working directory</string>
+        </property>
         <property name="text">
          <string>...</string>
         </property>
@@ -138,6 +150,9 @@
     </item>
     <item row="2" column="0">
      <widget class="QCheckBox" name="chBkCleanAtStart">
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Clear the working directory at pipline start&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
       <property name="text">
        <string>Cleanup when pipline start</string>
       </property>
@@ -161,6 +176,7 @@
     <addaction name="actionNew_pipline"/>
     <addaction name="actionLoad_pipline"/>
     <addaction name="actionSave_pipline"/>
+    <addaction name="actionSaveAs_pipline"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -192,10 +208,16 @@
    <property name="text">
     <string>New pipline</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
   </action>
   <action name="actionLoad_pipline">
    <property name="text">
     <string>Load pipline</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionAdd_GIT_Clone_Step">
@@ -265,6 +287,9 @@
    <property name="text">
     <string>Save pipline</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
   </action>
   <action name="actionClean">
    <property name="icon">
@@ -274,10 +299,21 @@
    <property name="text">
     <string>Clean</string>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Clear the working directory&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
   </action>
   <action name="actionConfiguration">
    <property name="text">
     <string>Configuration</string>
+   </property>
+  </action>
+  <action name="actionSaveAs_pipline">
+   <property name="text">
+    <string>Save as pipline</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
    </property>
   </action>
  </widget>

@@ -16,6 +16,9 @@
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" colspan="2">
     <widget class="QCheckBox" name="checkBox">
+     <property name="toolTip">
+      <string>Enable step</string>
+     </property>
      <property name="text">
       <string>Enable step</string>
      </property>
@@ -26,6 +29,9 @@
    </item>
    <item row="2" column="0">
     <widget class="QPushButton" name="pBtnAddToken">
+     <property name="toolTip">
+      <string>Add new token to replace</string>
+     </property>
      <property name="text">
       <string>Add</string>
      </property>
@@ -80,8 +86,11 @@ hr { height: 1px; border-width: 0; }
        <height>0</height>
       </size>
      </property>
+     <property name="toolTip">
+      <string>Enable versioning DLL</string>
+     </property>
      <property name="title">
-      <string>Versionning dll</string>
+      <string>Versioning dll</string>
      </property>
      <property name="checkable">
       <bool>true</bool>
@@ -98,7 +107,11 @@ hr { height: 1px; border-width: 0; }
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="lEdtVersion"/>
+       <widget class="QLineEdit" name="lEdtVersion">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Version number. This string will be set in all rc files and all AssemblyInfo.cs&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -118,20 +131,32 @@ hr { height: 1px; border-width: 0; }
       <property name="text">
        <string>Token</string>
       </property>
+      <property name="toolTip">
+       <string>Token to replace</string>
+      </property>
      </column>
      <column>
       <property name="text">
        <string>Files filters</string>
+      </property>
+      <property name="toolTip">
+       <string>Filter files concerned by replacement</string>
       </property>
      </column>
      <column>
       <property name="text">
        <string>New token</string>
       </property>
+      <property name="toolTip">
+       <string>New token</string>
+      </property>
      </column>
      <column>
       <property name="text">
        <string>Remove</string>
+      </property>
+      <property name="toolTip">
+       <string>Remove token</string>
       </property>
      </column>
     </widget>

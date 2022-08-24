@@ -66,3 +66,13 @@ QString DontNeedADOApp::nugetPath()
 {
 	return m_appSettings.value("nuget_directory").toString();
 }
+
+void DontNeedADOApp::setCurrenFile(const QString& a_file)
+{
+	m_currentFile = a_file;
+}
+
+QString DontNeedADOApp::currentFile()const noexcept
+{
+	return m_currentFile;
+}

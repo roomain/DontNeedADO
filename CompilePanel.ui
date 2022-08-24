@@ -22,7 +22,11 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="QLineEdit" name="lEdtSLNPath"/>
+    <widget class="QLineEdit" name="lEdtSLNPath">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Solution file relative to working directory&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
    </item>
    <item row="5" column="0">
     <widget class="QLabel" name="label_4">
@@ -32,13 +36,25 @@
     </widget>
    </item>
    <item row="6" column="0" colspan="2">
-    <widget class="QPlainTextEdit" name="ptEdtOptions"/>
+    <widget class="QPlainTextEdit" name="ptEdtOptions">
+     <property name="toolTip">
+      <string>Compiler options</string>
+     </property>
+    </widget>
    </item>
    <item row="3" column="1">
-    <widget class="QLineEdit" name="lEdtConf"/>
+    <widget class="QLineEdit" name="lEdtConf">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Configuration (ex: Release)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
    </item>
    <item row="4" column="1">
-    <widget class="QLineEdit" name="lEdtPlatform"/>
+    <widget class="QLineEdit" name="lEdtPlatform">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Platform (ex:Win32/x86/x64)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
    </item>
    <item row="3" column="0">
     <widget class="QLabel" name="label_2">
@@ -56,6 +72,9 @@
    </item>
    <item row="0" column="0" colspan="2">
     <widget class="QCheckBox" name="checkBox">
+     <property name="toolTip">
+      <string>Enable step</string>
+     </property>
      <property name="text">
       <string>Enable step</string>
      </property>
@@ -72,7 +91,11 @@
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="QComboBox" name="cboCompiler"/>
+    <widget class="QComboBox" name="cboCompiler">
+     <property name="toolTip">
+      <string>Compiler to use</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

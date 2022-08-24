@@ -3,6 +3,7 @@
 #include <QDomElement>
 #include <qprocess.h>
 #include <QDirIterator>
+#include "DontNeedADOApp.h"
 
 
 
@@ -49,8 +50,6 @@ bool NugetStep::execute(ExecuteArgs& a_args)const
 	//nugetProcess.setWorkingDirectory(QString::fromLatin1(m_relDir));
 	for (auto file : lFiles)
 	{
-		
-
 		QString absFile = (path.endsWith('/') ? path : path + "/") + (relPath.endsWith('/') ? relPath : relPath + "/") + file;
 
 		nugetProcess.start("powershell", QStringList() << "-Command" << QString("write-NugetPackage -Package %1 -PackageVersion %2")
@@ -76,8 +75,14 @@ bool NugetStep::execute(ExecuteArgs& a_args)const
 	}
 
 	// move files
+	// directory where nugets will be transfered
+	DontNeedADOApp* pApp = static_cast<DontNeedADOApp*>(qApp);
+	QString newDir = pApp->nugetPath();
+	if (newDir.isEmpty())
+		newDir = (path.endsWith('/') ? path : path + "/") + (relPath.endsWith('/') ? relPath : relPath + "/");
+
+	// transfert generated nupkg
 	a_args.outputLog += "\nMOVE FILES:\n";
-	QString newDir = (path.endsWith('/') ? path : path + "/") + (relPath.endsWith('/') ? relPath : relPath + "/");
 	QDirIterator iter("", QStringList() << "*.nupkg",
 		QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
 	while (iter.hasNext())

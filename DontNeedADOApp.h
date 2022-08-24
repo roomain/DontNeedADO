@@ -8,6 +8,7 @@ class DontNeedADOApp : public QApplication
 
 private:
 	QSettings m_appSettings;
+	QString m_currentFile;
 
 public:
 	DontNeedADOApp(int& argc, char** argv, int = ApplicationFlags);
@@ -21,5 +22,8 @@ public:
 	QString cmakePath();
 	void setNugetPath(const QString& a_path);
 	QString nugetPath();
+
+	void setCurrenFile(const QString& a_file);
+	QString currentFile()const noexcept;
 };
 

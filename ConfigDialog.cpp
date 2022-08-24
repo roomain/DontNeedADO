@@ -12,12 +12,13 @@ ConfigDialog::ConfigDialog(QWidget *parent)
 	ui.lEdtCMake->setText(pApp->cmakePath());
 	ui.lEdtNuget->setText(pApp->nugetPath());
 
-
 	QObject::connect(ui.pBtnBrowseCMake, QOverload<bool>::of(&QPushButton::clicked), this, &ConfigDialog::onBrowseCMake);
 	QObject::connect(ui.pBtnBrowseNuget, QOverload<bool>::of(&QPushButton::clicked), this, &ConfigDialog::onBrowseNuget);
 
 	QObject::connect(ui.lEdtCMake, &QLineEdit::textChanged, this, &ConfigDialog::setCMakePath);
 	QObject::connect(ui.lEdtNuget, &QLineEdit::textChanged, this, &ConfigDialog::setNugetPath);
+
+	QObject::connect(ui.pBtnClose, QOverload<bool>::of(&QPushButton::clicked), this, &QDialog::accept);
 }
 
 ConfigDialog::~ConfigDialog()

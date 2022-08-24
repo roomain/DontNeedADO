@@ -54,6 +54,8 @@ private:
     void onLoadPiplineFromRecent();
     bool loadPipline(const QString& a_file);
     void onSavePipline();
+    void onSavePiplineAs();
+    void saveFile(const QString& a_file);
     //----------------------
     void onClean();
     void onEnable(bool a_bEnable);

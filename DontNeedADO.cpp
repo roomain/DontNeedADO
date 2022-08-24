@@ -13,12 +13,13 @@
 #include <QXmlStreamReader>
 #include "DontNeedADOApp.h"
 #include "ConfigDialog.h"
+#include "qmessagebox.h"
 
 DontNeedADO::DontNeedADO(QWidget *parent)
     : QMainWindow(parent), m_pRecentFiles{ nullptr }
 {
     ui.setupUi(this);
-
+    setWindowTitle("Don't need ADO!");
     createRecentMenu();
 
     m_pProgress = new QProgressBar;
@@ -40,11 +41,11 @@ DontNeedADO::DontNeedADO(QWidget *parent)
     QObject::connect(ui.actionNew_pipline, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onNewPipline);
     QObject::connect(ui.actionLoad_pipline, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onLoadPipline);
     QObject::connect(ui.actionSave_pipline, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onSavePipline);
+    QObject::connect(ui.actionSaveAs_pipline, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onSavePipline);
     QObject::connect(ui.actionConfiguration, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onConfiguration);
 
     QObject::connect(ui.lstPipline, &QListWidget::itemSelectionChanged, this, &DontNeedADO::itemSelected, Qt::DirectConnection);
     QObject::connect(ui.lstPipline->model(), &QAbstractItemModel::rowsMoved, this, &DontNeedADO::onRowsMoved, Qt::DirectConnection);
-    // TODO
 
     QObject::connect(ui.pageGIT, &GitClonePanel::sg_enabled, this, &DontNeedADO::onEnable);
     QObject::connect(ui.pageCMake, &CMakePanel::sg_enabled, this, &DontNeedADO::onEnable);
@@ -171,6 +172,7 @@ void DontNeedADO::clear()
 {
     ui.lstPipline->clear();
     m_ADOPipline.clear();
+    ui.lEdtWorkingDir->clear();
 }
 
 void DontNeedADO::onNewPipline()
@@ -178,15 +180,27 @@ void DontNeedADO::onNewPipline()
     clear();
     ui.stackedWidget->setCurrentIndex(static_cast<int>(STEP_PAGES::LOG_PAGE));
     ui.tEdtLog->clear();
+    DontNeedADOApp* pApp = static_cast<DontNeedADOApp*>(qApp);
+    pApp->setCurrenFile("");
 }
 
 
 void DontNeedADO::onLoadPiplineFromRecent()
 {
     QAction* pAct = static_cast<QAction*>(sender());
-    if (loadPipline(pAct->text()))
+    if (QFile::exists(pAct->text()))
     {
-        resetRecentMenu(pAct->text());
+        if (loadPipline(pAct->text()))
+        {
+            resetRecentMenu(pAct->text());
+        }
+    }
+    else
+    {
+        QMessageBox::warning(this, "Error!", QString("File %1\ndoes not exist!").arg(pAct->text()));
+        DontNeedADOApp* pApp = static_cast<DontNeedADOApp*>(qApp);
+        pApp->removeFile(pAct->text());
+        createRecentMenu();
     }
 }
 
@@ -297,35 +311,59 @@ bool DontNeedADO::loadPipline(const QString& a_file)
                 }
             }
             bRet = true;
+
+            DontNeedADOApp* pApp = static_cast<DontNeedADOApp*>(qApp);
+            pApp->setCurrenFile(a_file);
+            setWindowTitle(QString("Don't need ADO! %1").arg(a_file));
         }
     }
     return bRet;
 }
 
-void DontNeedADO::onSavePipline()
+void DontNeedADO::onSavePiplineAs()
 {
     auto filename = QFileDialog::getSaveFileName(this, "Save pipline", "", "Pipline (*.xml)");
     if (!filename.isEmpty())
+        saveFile(filename);
+}
+
+void DontNeedADO::saveFile(const QString& a_file)
+{
+    QFile file(a_file);
+    if (file.open(QIODevice::WriteOnly))
     {
-        QFile file(filename);
-        if (file.open(QIODevice::WriteOnly))
-        {
-            QXmlStreamWriter writer(&file);
-            writer.setAutoFormatting(true);
-            writer.writeStartDocument();
+        QXmlStreamWriter writer(&file);
+        writer.setAutoFormatting(true);
+        writer.writeStartDocument();
 
-            writer.writeStartElement("DontNeedADO");
-            writer.writeAttribute("Working_directory", ui.lEdtWorkingDir->text());
-            writer.writeAttribute("Cleanup_at_start", QString("%1").arg(ui.chBkCleanAtStart->isChecked()));
+        writer.writeStartElement("DontNeedADO");
+        writer.writeAttribute("Working_directory", ui.lEdtWorkingDir->text());
+        writer.writeAttribute("Cleanup_at_start", QString("%1").arg(ui.chBkCleanAtStart->isChecked()));
 
-            m_ADOPipline.save(writer);
+        m_ADOPipline.save(writer);
 
-            writer.writeEndElement();
-            writer.writeEndDocument();
-            file.close();
+        writer.writeEndElement();
+        writer.writeEndDocument();
+        file.close();
 
-            resetRecentMenu(filename);
-        }
+        resetRecentMenu(a_file);
+        DontNeedADOApp* pApp = static_cast<DontNeedADOApp*>(qApp);
+        pApp->setCurrenFile(a_file);
+        setWindowTitle(QString("Don't need ADO! %1").arg(a_file));
+    }
+}
+
+void DontNeedADO::onSavePipline()
+{
+    DontNeedADOApp* pApp = static_cast<DontNeedADOApp*>(qApp);
+    QString sCurrentFile = pApp->currentFile();
+    if (sCurrentFile.isEmpty())
+    {
+        onSavePiplineAs();
+    }
+    else
+    {
+        saveFile(sCurrentFile);
     }
 }
 
