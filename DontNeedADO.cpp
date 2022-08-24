@@ -41,7 +41,7 @@ DontNeedADO::DontNeedADO(QWidget *parent)
     QObject::connect(ui.actionNew_pipline, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onNewPipline);
     QObject::connect(ui.actionLoad_pipline, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onLoadPipline);
     QObject::connect(ui.actionSave_pipline, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onSavePipline);
-    QObject::connect(ui.actionSaveAs_pipline, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onSavePipline);
+    QObject::connect(ui.actionSaveAs_pipline, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onSavePiplineAs);
     QObject::connect(ui.actionConfiguration, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onConfiguration);
 
     QObject::connect(ui.lstPipline, &QListWidget::itemSelectionChanged, this, &DontNeedADO::itemSelected, Qt::DirectConnection);

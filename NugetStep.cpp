@@ -83,7 +83,7 @@ bool NugetStep::execute(ExecuteArgs& a_args)const
 
 	// transfert generated nupkg
 	a_args.outputLog += "\nMOVE FILES:\n";
-	QDirIterator iter("", QStringList() << "*.nupkg",
+	QDirIterator iter(QApplication::applicationDirPath(), QStringList() << "*.nupkg",
 		QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
 	while (iter.hasNext())
 	{
