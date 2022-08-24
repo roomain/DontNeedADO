@@ -88,6 +88,12 @@
     <ClCompile Include="ConfigDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="VariablesStep.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VariablesPanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="GitClonePanel.h">
@@ -117,6 +123,9 @@
     <QtMoc Include="ConfigDialog.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="VariablesPanel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="GitClonePanel.ui">
@@ -138,6 +147,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="ConfigDialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="VariablesPanel.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
@@ -164,6 +176,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VariablesStep.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

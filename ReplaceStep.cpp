@@ -56,6 +56,9 @@ bool ReplaceStep::execute(ExecuteArgs& a_args)const
 	{
 		QString filter = QString::fromLatin1(token.filters);
 		auto lstFilters = filter.split(';');
+		std::string tokenValue;
+		if (!PiplineStep::isVariable(a_args.variables, token.token, tokenValue))
+			tokenValue = token.value;
 
 		QDirIterator iter(QString::fromLatin1(a_args.workingDirectory), lstFilters,
 			QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
@@ -69,7 +72,7 @@ bool ReplaceStep::execute(ExecuteArgs& a_args)const
 				if (file.open(QIODevice::ReadWrite))
 				{
 					QByteArray data = file.readAll();
-					data.replace(QByteArray(token.token.c_str()), QByteArray(token.value.c_str()));
+					data.replace(QByteArray(token.token.c_str()), QByteArray(tokenValue.c_str()));
 					file.reset();
 					file.resize(0);
 					file.write(data);
@@ -83,7 +86,11 @@ bool ReplaceStep::execute(ExecuteArgs& a_args)const
 
 	if (m_bEnableVersion && !m_version.empty())
 	{
-		QStringList versionSplitted = QString::fromLatin1(m_version).split('.');
+		std::string version;
+		if (!PiplineStep::isVariable(a_args.variables, m_version, version))
+			version = m_version;
+
+		QStringList versionSplitted = QString::fromLatin1(version).split('.');
 
 		a_args.outputLog += "\nVERSIONING:\n";
 		QDirIterator iter(QString::fromLatin1(a_args.workingDirectory), QStringList() << "*.rc",
@@ -127,13 +134,13 @@ bool ReplaceStep::execute(ExecuteArgs& a_args)const
 						{
 							int iIndex = line.indexOf("VALUE");
 							line = line.left(iIndex);
-							line += "VALUE \"FileVersion\", \"" + QString::fromLatin1(m_version) + "\"";
+							line += "VALUE \"FileVersion\", \"" + QString::fromLatin1(version) + "\"";
 						}
 						else if (line.contains("VALUE \"ProductVersion\""))
 						{
 							int iIndex = line.indexOf("VALUE");
 							line = line.left(iIndex);
-							line += "VALUE \"ProductVersion\", \"" + QString::fromLatin1(m_version) + "\"";
+							line += "VALUE \"ProductVersion\", \"" + QString::fromLatin1(version) + "\"";
 						}
 						line += "\n";
 						data.append(line.toStdString().c_str());
@@ -143,7 +150,7 @@ bool ReplaceStep::execute(ExecuteArgs& a_args)const
 					file.resize(0);
 					file.write(data);
 					file.close();
-					a_args.outputLog += path + " : " + QString::fromLatin1(m_version);
+					a_args.outputLog += path + " : " + QString::fromLatin1(version);
 				}
 			}
 		}
@@ -167,11 +174,11 @@ bool ReplaceStep::execute(ExecuteArgs& a_args)const
 						line = stream.readLine();
 						if (line.startsWith("[assembly: AssemblyVersion"))
 						{
-							line = "[assembly: AssemblyVersion(\""+ QString::fromLatin1(m_version) +"\")]";
+							line = "[assembly: AssemblyVersion(\""+ QString::fromLatin1(version) +"\")]";
 						}
 						else if (line.startsWith("[assembly: AssemblyFileVersion"))
 						{
-							line = "[assembly: AssemblyFileVersion(\"" + QString::fromLatin1(m_version) + "\")]";
+							line = "[assembly: AssemblyFileVersion(\"" + QString::fromLatin1(version) + "\")]";
 						}
 						line += "\n";
 						data.append(line.toStdString().c_str());
@@ -181,7 +188,7 @@ bool ReplaceStep::execute(ExecuteArgs& a_args)const
 					file.resize(0);
 					file.write(data);
 					file.close();
-					a_args.outputLog += path + " : " + QString::fromLatin1(m_version);
+					a_args.outputLog += path + " : " + QString::fromLatin1(version);
 				}
 			}
 		}

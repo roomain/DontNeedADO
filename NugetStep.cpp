@@ -44,6 +44,10 @@ bool NugetStep::execute(ExecuteArgs& a_args)const
 	QProcess nugetProcess;
 	QStringList lFiles = QString::fromLatin1(m_files).split(";");
 
+	std::string version;
+	if (!PiplineStep::isVariable(a_args.variables, m_version, version))
+		version = m_version;
+
 	// mise en forme path:
 	QString path = QString::fromLatin1(a_args.workingDirectory).replace('\\', '/');
 	QString relPath = QString::fromLatin1(m_relDir).replace('\\', '/');
@@ -53,7 +57,7 @@ bool NugetStep::execute(ExecuteArgs& a_args)const
 		QString absFile = (path.endsWith('/') ? path : path + "/") + (relPath.endsWith('/') ? relPath : relPath + "/") + file;
 
 		nugetProcess.start("powershell", QStringList() << "-Command" << QString("write-NugetPackage -Package %1 -PackageVersion %2")
-			.arg(absFile).arg(QString::fromLatin1(m_version)));
+			.arg(absFile).arg(QString::fromLatin1(version)));
 
 		auto lstArgs = nugetProcess.arguments();
 		QString argumentStr;

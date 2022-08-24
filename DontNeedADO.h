@@ -24,7 +24,8 @@ private:
         REPLACE_PAGE,
         COMPILE_PAGE,
         NUGET_PAGE,
-        TAG_PAGE
+        TAG_PAGE,
+        VAR_PAGE
     };
 
     Ui::DontNeedADOClass ui;
@@ -46,6 +47,7 @@ private:
     void addCompileStep();
     void addNugetStep();
     void addTagStep();
+    void addVarStep();
     void onRemoveStep();
     //----------------------
     void itemSelected();

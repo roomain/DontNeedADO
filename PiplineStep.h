@@ -1,15 +1,25 @@
 ﻿#pragma once
 #include <QString>
 #include <string>
+#include <vector>
 
 class QXmlStreamWriter;
 class QDomElement;
+
+
+struct Variable
+{
+	std::string m_varName;
+	std::string m_varValue;
+};
+
+using VariableVector = std::vector<Variable>;
 
 struct ExecuteArgs
 {
 	std::string workingDirectory;
 	QString outputLog;
-	/*TODO*/
+	VariableVector variables;
 };
 
 
@@ -28,6 +38,19 @@ public:
 	virtual inline bool isTagStep()const { return false; }
 	inline void setEnable(const bool a_enable) { m_bEnable = a_enable; }
 	inline bool isEnabled()const noexcept { return m_bEnable; }
+
+	static inline bool isVariable(const VariableVector& a_variables, const std::string& a_checkName, std::string& a_value)
+	{
+		for (const auto& var : a_variables)
+		{
+			if (var.m_varName == a_checkName)
+			{
+				a_value = var.m_varValue;
+				return true;
+			}
+		}
+		return false;
+	}
 };
 
 /*

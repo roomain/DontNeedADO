@@ -5,6 +5,7 @@
 #include "CompileStep.h"
 #include "NugetStep.h"
 #include "TagStep.h"
+#include "VariablesStep.h"
 #include <QXmlStreamWriter>
 #include <QDomElement>
 
@@ -102,6 +103,12 @@ void Pipline::load(const QDomElement& a_reader)
 			else if (elem.tagName() == "NugetStep")
 			{
 				std::shared_ptr<NugetStep> pStep = std::make_shared<NugetStep>();
+				pStep->load(elem);
+				m_vSteps.push_back(pStep);
+			}
+			else if (elem.tagName() == "VariablesStep")
+			{
+				std::shared_ptr<VariablesStep> pStep = std::make_shared<VariablesStep>();
 				pStep->load(elem);
 				m_vSteps.push_back(pStep);
 			}

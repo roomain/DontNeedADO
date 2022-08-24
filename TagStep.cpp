@@ -35,7 +35,12 @@ std::string TagStep::comments()const noexcept
 
 bool TagStep::execute(ExecuteArgs& a_args)const
 {
-	QString cmd = QString("git tag -a %1 -m \"%2\"").arg(QString::fromLatin1(m_tag)).arg(QString::fromLatin1(m_comments));
+
+	std::string tagname;
+	if (!PiplineStep::isVariable(a_args.variables, m_tag, tagname))
+		tagname = m_tag;
+
+	QString cmd = QString("git tag -a %1 -m \"%2\"").arg(QString::fromLatin1(tagname)).arg(QString::fromLatin1(m_comments));
 	QProcess gitProcess;
 	gitProcess.setWorkingDirectory(QString::fromLatin1(a_args.workingDirectory + "/" + m_relDir));
 	gitProcess.start("git", QStringList() << "tag" << "-a" << QString::fromLatin1(m_tag) << "-m" << "\"" + QString::fromLatin1(m_comments) + "\"");

@@ -110,6 +110,8 @@
     <ClCompile Include="ReplaceStep.cpp" />
     <ClCompile Include="TagPanel.cpp" />
     <ClCompile Include="TagStep.cpp" />
+    <ClCompile Include="VariablesPanel.cpp" />
+    <ClCompile Include="VariablesStep.cpp" />
     <QtRcc Include="DontNeedADO.qrc" />
     <QtUic Include="CMakePanel.ui" />
     <QtUic Include="CompilePanel.ui" />
@@ -123,6 +125,7 @@
     <QtUic Include="NugetPanel.ui" />
     <QtUic Include="ReplacePanel.ui" />
     <QtUic Include="TagPanel.ui" />
+    <QtUic Include="VariablesPanel.ui" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="GitClonePanel.h" />
@@ -141,6 +144,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CMakeStep.h" />
+    <QtMoc Include="VariablesPanel.h" />
+    <ClInclude Include="VariablesStep.h" />
     <QtMoc Include="CompilePanel.h" />
     <ClInclude Include="CompileStep.h" />
     <QtMoc Include="DontNeedADOApp.h" />

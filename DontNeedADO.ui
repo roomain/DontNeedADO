@@ -58,7 +58,7 @@
       </widget>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>2</number>
+        <number>7</number>
        </property>
        <widget class="QWidget" name="pageLog">
         <layout class="QVBoxLayout" name="verticalLayout">
@@ -98,6 +98,7 @@
        <widget class="CompilePanel" name="pageCompile"/>
        <widget class="NugetPanel" name="pageNuget"/>
        <widget class="TagPanel" name="pageTag"/>
+       <widget class="VariablesPanel" name="pageVariables"/>
       </widget>
      </widget>
     </item>
@@ -197,6 +198,7 @@
    <addaction name="actionClean"/>
    <addaction name="actionDelete_Step"/>
    <addaction name="actionAdd_GIT_Clone_Step"/>
+   <addaction name="actionAdd_Variables_step"/>
    <addaction name="actionAdd_CMake_Step"/>
    <addaction name="actionAdd_Replace_String"/>
    <addaction name="actionAdd_Compile_Step"/>
@@ -316,6 +318,15 @@
     <string>Ctrl+Shift+S</string>
    </property>
   </action>
+  <action name="actionAdd_Variables_step">
+   <property name="icon">
+    <iconset resource="DontNeedADO.qrc">
+     <normaloff>:/DontNeedADO/resources/variables.png</normaloff>:/DontNeedADO/resources/variables.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add Variables step</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -353,6 +364,12 @@
    <class>TagPanel</class>
    <extends>QWidget</extends>
    <header>tagpanel.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>VariablesPanel</class>
+   <extends>QWidget</extends>
+   <header>variablespanel.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

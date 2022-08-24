@@ -6,6 +6,7 @@
 #include "CompileStep.h"
 #include "NugetStep.h"
 #include "TagStep.h"
+#include "VariablesStep.h"
 #include <qdir.h>
 #include <qdiriterator.h>
 #include <QDomDocument>
@@ -36,6 +37,7 @@ DontNeedADO::DontNeedADO(QWidget *parent)
     QObject::connect(ui.actionAdd_Nuget_Step, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::addNugetStep);
     QObject::connect(ui.actionAdd_Tag_Step, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::addTagStep);
     QObject::connect(ui.actionDelete_Step, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onRemoveStep);
+    QObject::connect(ui.actionAdd_Variables_step, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::addVarStep);
     QObject::connect(ui.actionClean, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onClean);
 
     QObject::connect(ui.actionNew_pipline, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onNewPipline);
@@ -309,6 +311,13 @@ bool DontNeedADO::loadPipline(const QString& a_file)
                     QListWidgetItem* pItem = createItem(STEP_PAGES::NUGET_PAGE);
                     pItem->setData(Qt::ForegroundRole, pNuget->isEnabled() ? QColor(Qt::black) : QColor(Qt::gray));
                 }
+
+                auto pVariables = dynamic_cast<VariablesStep*>(pStep.get());
+                if (pVariables)
+                {
+                    QListWidgetItem* pItem = createItem(STEP_PAGES::VAR_PAGE);
+                    pItem->setData(Qt::ForegroundRole, pVariables->isEnabled() ? QColor(Qt::black) : QColor(Qt::gray));
+                }
             }
             bRet = true;
 
@@ -403,6 +412,10 @@ void DontNeedADO::itemSelected()
                 ui.pageTag->loadStep(dynamic_cast<TagStep*>(m_ADOPipline[iRow].get()));
                 break;
 
+            case STEP_PAGES::VAR_PAGE:
+                ui.pageVariables->loadStep(dynamic_cast<VariablesStep*>(m_ADOPipline[iRow].get()));
+                break;
+
             default:
                 break;
             }
@@ -457,6 +470,13 @@ QListWidgetItem* DontNeedADO::createItem(const STEP_PAGES a_type)
         ui.lstPipline->addItem(pItem);
         break;
 
+    case STEP_PAGES::VAR_PAGE:
+        pItem = new QListWidgetItem("VARIABLE STEP");
+        pItem->setIcon(QIcon(":/DontNeedADO/resources/variables.png"));
+        pItem->setData(Qt::UserRole, static_cast<int>(STEP_PAGES::VAR_PAGE));
+        ui.lstPipline->addItem(pItem);
+        break;
+
     default:
         break;
     }
@@ -507,6 +527,14 @@ void DontNeedADO::addTagStep()
 {
     QListWidgetItem* pItem = createItem(STEP_PAGES::TAG_PAGE);
     std::shared_ptr<TagStep> pStep = std::make_shared<TagStep>();
+    m_ADOPipline.addStep(pStep);
+    ui.lstPipline->setCurrentItem(pItem);
+}
+
+void DontNeedADO::addVarStep()
+{
+    QListWidgetItem* pItem = createItem(STEP_PAGES::VAR_PAGE);
+    std::shared_ptr<VariablesStep> pStep = std::make_shared<VariablesStep>();
     m_ADOPipline.addStep(pStep);
     ui.lstPipline->setCurrentItem(pItem);
 }
