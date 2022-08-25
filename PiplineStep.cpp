@@ -1,5 +1,17 @@
 #include "PiplineStep.h"
 
+bool PiplineStep::hasVariable(const VariableVector& a_variables, const std::string& a_checkName, std::string& a_value)
+{
+	bool bRet = false;
+	QString temp = QString::fromLatin1(a_checkName);
+	for (const auto& var : a_variables)
+	{
+		temp.replace(QString::fromLatin1(var.m_varName), QString::fromLatin1(var.m_varValue));
+	}
+	a_value = temp.toStdString();
+	return true;
+}
+
 bool PiplineStep::isVariable(const VariableVector& a_variables, const std::string& a_checkName, std::string& a_value)
 {
 	for (const auto& var : a_variables)

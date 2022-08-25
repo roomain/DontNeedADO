@@ -99,7 +99,7 @@ void DontNeedADO::executePipline()
 
     ui.tEdtLog->clear();
     ui.stackedWidget->setCurrentIndex(static_cast<int>(STEP_PAGES::LOG_PAGE));
-    m_ADOPipline.execute(false);    
+    m_ADOPipline.execute(false, ui.chBkPushTag->isChecked());
 }
 
 void DontNeedADO::executeWithoutTag()
@@ -269,6 +269,7 @@ bool DontNeedADO::loadPipline(const QString& a_file)
                 QDomElement root = xmlPipline.firstChildElement();
                 if (!root.isNull())
                 {
+                    ui.chBkPushTag->setChecked(root.attribute("push_tag", "0") == "1");
                     ui.lEdtWorkingDir->setText(root.attribute("Working_directory"));
                     ui.chBkCleanAtStart->setChecked(root.attribute("Cleanup_at_start", "0") == "1");
                     m_ADOPipline.setWorkingDir(ui.lEdtWorkingDir->text().toStdString());
@@ -358,6 +359,7 @@ void DontNeedADO::saveFile(const QString& a_file)
         writer.writeStartElement("DontNeedADO");
         writer.writeAttribute("Working_directory", ui.lEdtWorkingDir->text());
         writer.writeAttribute("Cleanup_at_start", QString("%1").arg(ui.chBkCleanAtStart->isChecked()));
+        writer.writeAttribute("push_tag", QString("%1").arg(ui.chBkPushTag->isChecked()));
 
         m_ADOPipline.save(writer);
 

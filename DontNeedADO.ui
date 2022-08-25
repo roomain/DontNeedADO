@@ -30,16 +30,6 @@
     <property name="spacing">
      <number>0</number>
     </property>
-    <item row="3" column="0">
-     <widget class="QPushButton" name="pBtnExecutePiplineWithoutTag">
-      <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Execute pipline ignoring the tag steps&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-      <property name="text">
-       <string>Execute Pipline without tag</string>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="0" colspan="2">
      <widget class="QSplitter" name="splitter">
       <property name="sizePolicy">
@@ -139,16 +129,6 @@
       </widget>
      </widget>
     </item>
-    <item row="3" column="1">
-     <widget class="QPushButton" name="pBtnExecutePipline">
-      <property name="toolTip">
-       <string>Execute the pipline</string>
-      </property>
-      <property name="text">
-       <string>Execute Pipline</string>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="0" colspan="2">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
@@ -186,6 +166,16 @@
       </item>
      </layout>
     </item>
+    <item row="4" column="0">
+     <widget class="QPushButton" name="pBtnExecutePiplineWithoutTag">
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Execute pipline ignoring the tag steps&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>Execute Pipline without tag</string>
+      </property>
+     </widget>
+    </item>
     <item row="2" column="0">
      <widget class="QCheckBox" name="chBkCleanAtStart">
       <property name="toolTip">
@@ -193,6 +183,26 @@
       </property>
       <property name="text">
        <string>Cleanup when pipline start</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QPushButton" name="pBtnExecutePipline">
+      <property name="toolTip">
+       <string>Execute the pipline</string>
+      </property>
+      <property name="text">
+       <string>Execute Pipline</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QCheckBox" name="chBkPushTag">
+      <property name="text">
+       <string>Push tag</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </item>

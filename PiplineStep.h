@@ -18,6 +18,7 @@ using VariableVector = std::vector<Variable>;
 
 struct ExecuteArgs
 {
+	bool pushTag;
 	std::string workingDirectory;
 	QString outputLog;
 	VariableVector variables;
@@ -40,6 +41,7 @@ public:
 	inline void setEnable(const bool a_enable) { m_bEnable = a_enable; }
 	inline bool isEnabled()const noexcept { return m_bEnable; }
 
+	static bool hasVariable(const VariableVector& a_variables, const std::string& a_checkName, std::string& a_value);
 	static bool isVariable(const VariableVector& a_variables, const std::string& a_checkName, std::string& a_value);
 	static QString toHtmlMessage(const QString& a_message, bool a_bold = false);
 	static QString toHtmlSuccess(const QString& a_message, bool a_bold = false);

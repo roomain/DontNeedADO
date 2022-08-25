@@ -37,13 +37,12 @@ bool TagStep::execute(ExecuteArgs& a_args)const
 {
 
 	std::string tagname;
-	if (!PiplineStep::isVariable(a_args.variables, m_tag, tagname))
+	if (!PiplineStep::hasVariable(a_args.variables, m_tag, tagname))
 		tagname = m_tag;
 
-	QString cmd = QString("git tag -a %1 -m \"%2\"").arg(QString::fromLatin1(tagname)).arg(QString::fromLatin1(m_comments));
 	QProcess gitProcess;
 	gitProcess.setWorkingDirectory(QString::fromLatin1(a_args.workingDirectory + "/" + m_relDir));
-	gitProcess.start("git", QStringList() << "tag" << "-a" << QString::fromLatin1(m_tag) << "-m" << "\"" + QString::fromLatin1(m_comments) + "\"");
+	gitProcess.start("git", QStringList() << "tag" << "-a" << QString::fromLatin1(tagname) << "-m" << "\"" + QString::fromLatin1(m_comments) + "\"");
 	if (!gitProcess.waitForStarted())
 	{
 		a_args.outputLog += PiplineStep::formatMessage("GIT TAG:", "NOT STARTED!", gitProcess);
@@ -54,16 +53,18 @@ bool TagStep::execute(ExecuteArgs& a_args)const
 	a_args.outputLog += PiplineStep::formatMessage("GIT TAG:", gitProcess);
 
 	//------------------------------------------------------------------------------------------------
-
-	gitProcess.start("git", QStringList() << "push" << "--tags");
-	if (!gitProcess.waitForStarted())
+	if (a_args.pushTag)
 	{
-		a_args.outputLog += PiplineStep::formatMessage("GIT PUSH TAG:", "NOT STARTED!", gitProcess);
-		return false;
-	}
-	bOk = gitProcess.waitForFinished();
+		gitProcess.start("git", QStringList() << "push" << "--tags");
+		if (!gitProcess.waitForStarted())
+		{
+			a_args.outputLog += PiplineStep::formatMessage("GIT PUSH TAG:", "NOT STARTED!", gitProcess);
+			return false;
+		}
+		bOk = gitProcess.waitForFinished();
 
-	a_args.outputLog += PiplineStep::formatMessage("GIT PUSH TAG:", gitProcess);
+		a_args.outputLog += PiplineStep::formatMessage("GIT PUSH TAG:", gitProcess);
+	}
 	return bOk;
 }
 

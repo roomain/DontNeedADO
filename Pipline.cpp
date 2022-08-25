@@ -116,7 +116,7 @@ void Pipline::load(const QDomElement& a_reader)
 	}
 }
 
-void Pipline::execute(const bool a_dontUseTag)
+void Pipline::execute(const bool a_dontUseTag, const bool a_pushTag)
 {
 	bool bRet = false;
 	if (m_vSteps.size() > 0)
@@ -126,7 +126,7 @@ void Pipline::execute(const bool a_dontUseTag)
 
 		m_worker = std::make_unique<std::thread>([=]()
 			{
-				ExecuteArgs args{ .workingDirectory = this->m_workingDir };
+				ExecuteArgs args{ .pushTag = a_pushTag, .workingDirectory = this->m_workingDir };
 				int iIndex = 0;
 				emit this->sg_start(m_vSteps.size());
 				bool bResult = true;
