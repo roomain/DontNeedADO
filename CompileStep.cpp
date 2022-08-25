@@ -59,11 +59,11 @@ QString CompileStep::getCompilerPath()const noexcept
 	QString sRet;
 	switch (m_compiler)
 	{
-	case COMPILER::VS_2015:
+	case COMPILER::VS_2017:
 		sRet = "\"C:/Program Files (x86)/Microsoft Visual Studio/2017/Professional/MSBuild/Current/Bin/msbuild.exe\"";
 		break;
 
-	case COMPILER::VS_2017:
+	case COMPILER::VS_2015:
 		sRet = "\"C:/Program Files (x86)/Microsoft Visual Studio/2015/Professional/MSBuild/Current/Bin/msbuild.exe\"";
 		break;
 
