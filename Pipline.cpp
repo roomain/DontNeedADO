@@ -129,6 +129,7 @@ void Pipline::execute(const bool a_dontUseTag)
 				ExecuteArgs args{ .workingDirectory = this->m_workingDir };
 				int iIndex = 0;
 				emit this->sg_start(m_vSteps.size());
+				bool bResult = true;
 				for (auto& step : m_vSteps)
 				{
 					args.outputLog.clear();
@@ -137,17 +138,24 @@ void Pipline::execute(const bool a_dontUseTag)
 						if (a_dontUseTag)
 						{
 							if (!step->isTagStep())
-								step->execute(args);
+								bResult = step->execute(args);
 						}
 						else
 						{
-							step->execute(args);
+							bResult = step->execute(args);
 						}
+					}
+					else
+					{
+						bResult = true;
 					}
 					emit this->sg_update(iIndex, args.outputLog);
 					++iIndex;
+
+					if (!bResult)
+						break;
 				}
-				emit this->sg_finished();
+				emit this->sg_finished(bResult);
 			});
 	}
 }

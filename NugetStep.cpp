@@ -59,23 +59,15 @@ bool NugetStep::execute(ExecuteArgs& a_args)const
 		nugetProcess.start("powershell", QStringList() << "-Command" << QString("write-NugetPackage -Package %1 -PackageVersion %2")
 			.arg(absFile).arg(QString::fromLatin1(version)));
 
-		auto lstArgs = nugetProcess.arguments();
-		QString argumentStr;
-		std::for_each(lstArgs.begin(), lstArgs.end(), [&](const auto& arg) {argumentStr += arg + " "; });
 
 		if (!nugetProcess.waitForStarted())
 		{
-			a_args.outputLog += "\n\nNUGET STEP:\n" +
-				nugetProcess.program() + " " + argumentStr + "\n" + "NOT STARTED!\n" + nugetProcess.readAllStandardError();
+			a_args.outputLog += PiplineStep::formatMessage("GENERATE NUGETS:", "NOT STARTED!", nugetProcess);
 			return false;
 		}
-		nugetProcess.waitForFinished();
+		bRet = nugetProcess.waitForFinished();
 
-		
-
-		a_args.outputLog += "\n\nNUGET STEP:\n" +
-			nugetProcess.program() + " " + argumentStr + "\n" +
-			nugetProcess.readAllStandardOutput() + "\n" + nugetProcess.readAllStandardError();
+		a_args.outputLog += PiplineStep::formatMessage("GENERATE NUGETS:", nugetProcess);
 	}
 
 	// move files
@@ -86,7 +78,7 @@ bool NugetStep::execute(ExecuteArgs& a_args)const
 		newDir = (path.endsWith('/') ? path : path + "/") + (relPath.endsWith('/') ? relPath : relPath + "/");
 
 	// transfert generated nupkg
-	a_args.outputLog += "\nMOVE FILES:\n";
+	a_args.outputLog += PiplineStep::formatMessageNoError("TRANSFER FILES:", "");
 	QDirIterator iter(QApplication::applicationDirPath(), QStringList() << "*.nupkg",
 		QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
 	while (iter.hasNext())
@@ -98,7 +90,7 @@ bool NugetStep::execute(ExecuteArgs& a_args)const
 			QFile file(path);
 			file.copy(newDir + dirInfo.fileName());
 			file.remove();
-			a_args.outputLog += path + " -> " + newDir + dirInfo.fileName();
+			a_args.outputLog += PiplineStep::formatMessageNoError("TRANSFER:", path + " -> " + newDir + dirInfo.fileName());
 		}
 	}
 

@@ -1,5 +1,4 @@
 #include "GitStep.h"
-#include <QProcess>
 #include <QXmlStreamWriter>
 #include <QDomElement>
 #include <qstring.h>
@@ -24,18 +23,11 @@ bool GitStep::execute(ExecuteArgs& a_args)const
 	gitProcess.start("cmd.exe" , QStringList() << "/c" << cmdGit);
 	if (!gitProcess.waitForStarted())
 	{
-		a_args.outputLog += "\n\nGIT CLONE:\nNOT STARTED!\n" + gitProcess.readAllStandardError();
+		a_args.outputLog += PiplineStep::formatMessage("GIT CLONE:", "NOT STARTED!", gitProcess);
 		return false;
 	}
 	bool bOk = gitProcess.waitForFinished();
-	
-	auto lstArgs = gitProcess.arguments();
-	QString argumentStr;
-	std::for_each(lstArgs.begin(), lstArgs.end(), [&](const auto& arg) {argumentStr += arg + " "; });
-
-	a_args.outputLog += "\n\nGIT CLONE:\n" +
-		gitProcess.program() + " " + argumentStr + "\n" +
-		gitProcess.readAllStandardOutput() + "\n" + gitProcess.readAllStandardError();
+	a_args.outputLog += PiplineStep::formatMessage("GIT CLONE:", gitProcess);
 	//----------------------------------------------------------------------------------------------------------------------
 	QFileInfo info(QString::fromLatin1(m_url));
 	auto filename = info.fileName();
@@ -45,19 +37,12 @@ bool GitStep::execute(ExecuteArgs& a_args)const
 	gitProcess.start("cmd.exe", QStringList() << "/c" << "git submodule update --init --recursive");
 	if (!gitProcess.waitForStarted())
 	{
-		a_args.outputLog += "\n\nGIT SUBMODULES:\nNOT STARTED!\n" + gitProcess.readAllStandardError();
+		a_args.outputLog += PiplineStep::formatMessage("GIT SUBMODULES:", "NOT STARTED!", gitProcess);
 		return false;
 	}
 	bOk = gitProcess.waitForFinished();
 
-	lstArgs.clear();
-	lstArgs = gitProcess.arguments();
-	argumentStr.clear();
-	std::for_each(lstArgs.begin(), lstArgs.end(), [&](const auto& arg) {argumentStr += arg + " "; });
-
-	a_args.outputLog += "\n\nGIT SUBMODULES:\n" +
-		gitProcess.program() + " " + argumentStr + "\n" +
-		gitProcess.readAllStandardOutput() + "\n" + gitProcess.readAllStandardError();
+	a_args.outputLog += PiplineStep::formatMessage("GIT SUBMODULES:", gitProcess);
 	return bOk;
 }
 

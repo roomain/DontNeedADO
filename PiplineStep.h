@@ -2,6 +2,7 @@
 #include <QString>
 #include <string>
 #include <vector>
+#include <QProcess>
 
 class QXmlStreamWriter;
 class QDomElement;
@@ -39,18 +40,15 @@ public:
 	inline void setEnable(const bool a_enable) { m_bEnable = a_enable; }
 	inline bool isEnabled()const noexcept { return m_bEnable; }
 
-	static inline bool isVariable(const VariableVector& a_variables, const std::string& a_checkName, std::string& a_value)
-	{
-		for (const auto& var : a_variables)
-		{
-			if (var.m_varName == a_checkName)
-			{
-				a_value = var.m_varValue;
-				return true;
-			}
-		}
-		return false;
-	}
+	static bool isVariable(const VariableVector& a_variables, const std::string& a_checkName, std::string& a_value);
+	static QString toHtmlMessage(const QString& a_message, bool a_bold = false);
+	static QString toHtmlSuccess(const QString& a_message, bool a_bold = false);
+	static QString toHtmlError(const QString& a_message, bool a_bold = false);
+	static QString formatCommand(const QProcess& a_process);
+	static QString formatMessage(const QString& a_stepName, const QString& a_customError, QProcess& a_process);
+	static QString formatMessage(const QString& a_stepName, QProcess& a_process);
+	static QString formatMessage(const QString& a_stepName, const QString& a_customError);
+	static QString formatMessageNoError(const QString& a_stepName, const QString& a_messages);
 };
 
 /*

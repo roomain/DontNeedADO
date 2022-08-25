@@ -1,7 +1,6 @@
 #include "CompileStep.h"
 #include <QXmlStreamWriter>
 #include <QDomElement>
-#include <QProcess>
 
 
 
@@ -119,11 +118,11 @@ bool CompileStep::execute(ExecuteArgs& a_args)const
 
 	if (!buildProcess.waitForStarted())
 	{
-		a_args.outputLog += "\n\nBUILD:\nNOT STARTED!\n" + sCmd + "\n" + buildProcess.readAllStandardError();
+		a_args.outputLog += PiplineStep::formatMessage("BUILD:", "NOT STARTED!", buildProcess);
 		return false;
 	}
 	bRet = buildProcess.waitForFinished();
-	a_args.outputLog += "\n\nBUILD:\n" + sCmd + "\n" + buildProcess.readAllStandardOutput() + "\n" + buildProcess.readAllStandardError();
+	a_args.outputLog += PiplineStep::formatMessage("BUILD:", buildProcess);
 	return bRet;
 }
 

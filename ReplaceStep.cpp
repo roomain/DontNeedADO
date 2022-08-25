@@ -49,9 +49,8 @@ void ReplaceStep::replaceToken(const int a_index, const std::string& a_token, co
 
 bool ReplaceStep::execute(ExecuteArgs& a_args)const
 {
-	bool bRet = false;
-
-	a_args.outputLog += "\nREPLACE:\n";
+	bool bRet = true;
+	a_args.outputLog += PiplineStep::formatMessage("REPLACE IN FILES:", "");
 	for (const auto& token : m_vTokens)
 	{
 		QString filter = QString::fromLatin1(token.filters);
@@ -78,12 +77,14 @@ bool ReplaceStep::execute(ExecuteArgs& a_args)const
 					file.write(data);
 					file.flush();
 					file.close();
-					a_args.outputLog += path + " : " + QString::fromLatin1(token.token) + " -> " + QString::fromLatin1(token.value) + "\n";
+					a_args.outputLog += PiplineStep::formatMessageNoError("REPLACE:", path + " : " + QString::fromLatin1(token.token) + " -> " + 
+						QString::fromLatin1(token.value));
 				}
 			}
 		}
 	}
 
+	a_args.outputLog += PiplineStep::formatMessage("", "");
 	if (m_bEnableVersion && !m_version.empty())
 	{
 		std::string version;
@@ -92,7 +93,7 @@ bool ReplaceStep::execute(ExecuteArgs& a_args)const
 
 		QStringList versionSplitted = QString::fromLatin1(version).split('.');
 
-		a_args.outputLog += "\nVERSIONING:\n";
+		a_args.outputLog += PiplineStep::formatMessage("VERSIONING RC FILES:", "");
 		QDirIterator iter(QString::fromLatin1(a_args.workingDirectory), QStringList() << "*.rc",
 			QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
 		while (iter.hasNext())
@@ -150,11 +151,15 @@ bool ReplaceStep::execute(ExecuteArgs& a_args)const
 					file.resize(0);
 					file.write(data);
 					file.close();
-					a_args.outputLog += path + " : " + QString::fromLatin1(version);
+
+					a_args.outputLog += PiplineStep::formatMessageNoError("VERSIONING:", path + " : " + QString::fromLatin1(version));
 				}
 			}
 		}
 
+
+		a_args.outputLog += PiplineStep::formatMessage("", "");
+		a_args.outputLog += PiplineStep::formatMessage("VERSIONING ASSEMBLY INFO FILES:", "");
 		QDirIterator iterCS(QString::fromLatin1(a_args.workingDirectory), QStringList() << "AssemblyInfo.cs",
 			QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
 		while (iterCS.hasNext())
@@ -188,10 +193,11 @@ bool ReplaceStep::execute(ExecuteArgs& a_args)const
 					file.resize(0);
 					file.write(data);
 					file.close();
-					a_args.outputLog += path + " : " + QString::fromLatin1(version);
+					a_args.outputLog += PiplineStep::formatMessageNoError("VERSIONING:", path + " : " + QString::fromLatin1(version));
 				}
 			}
 		}
+		a_args.outputLog += PiplineStep::formatMessage("", "");
 	}
 
 	return bRet;

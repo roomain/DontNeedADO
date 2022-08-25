@@ -46,37 +46,24 @@ bool TagStep::execute(ExecuteArgs& a_args)const
 	gitProcess.start("git", QStringList() << "tag" << "-a" << QString::fromLatin1(m_tag) << "-m" << "\"" + QString::fromLatin1(m_comments) + "\"");
 	if (!gitProcess.waitForStarted())
 	{
-		a_args.outputLog += "\n\nGIT TAG:\nNOT STARTED!\n" + gitProcess.readAllStandardError();
+		a_args.outputLog += PiplineStep::formatMessage("GIT TAG:", "NOT STARTED!", gitProcess);
 		return false;
 	}
 	bool bOk = gitProcess.waitForFinished();
 
-	auto lstArgs = gitProcess.arguments();
-	QString argumentStr;
-	std::for_each(lstArgs.begin(), lstArgs.end(), [&](const auto& arg) {argumentStr += arg + " "; });
-
-	a_args.outputLog += "\n\nGIT TAG:" +
-		gitProcess.program() + " " + argumentStr + "\n" +
-		gitProcess.readAllStandardOutput() + "\n" + gitProcess.readAllStandardError();
+	a_args.outputLog += PiplineStep::formatMessage("GIT TAG:", gitProcess);
 
 	//------------------------------------------------------------------------------------------------
 
 	gitProcess.start("git", QStringList() << "push" << "--tags");
 	if (!gitProcess.waitForStarted())
 	{
-		a_args.outputLog += "\n\nGIT PUSH TAG:\nNOT STARTED!\n" + gitProcess.readAllStandardError();
+		a_args.outputLog += PiplineStep::formatMessage("GIT PUSH TAG:", "NOT STARTED!", gitProcess);
 		return false;
 	}
 	bOk = gitProcess.waitForFinished();
 
-	lstArgs.clear();
-	lstArgs = gitProcess.arguments();
-	argumentStr.clear();
-	std::for_each(lstArgs.begin(), lstArgs.end(), [&](const auto& arg) {argumentStr += arg + " "; });
-
-	a_args.outputLog += "\n\nGIT PUSH TAG:" +
-		gitProcess.program() + " " + argumentStr + "\n" +
-		gitProcess.readAllStandardOutput() + "\n" + gitProcess.readAllStandardError();
+	a_args.outputLog += PiplineStep::formatMessage("GIT PUSH TAG:", gitProcess);
 	return bOk;
 }
 

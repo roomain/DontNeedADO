@@ -21,12 +21,14 @@ void VariablesStep::updateVariable(const int a_index, const std::string& a_name,
 
 bool VariablesStep::execute(ExecuteArgs& a_args)const
 {
-	a_args.outputLog += "\nVARIABLES:\n";
+	a_args.outputLog += PiplineStep::formatMessage("SET VARIABLES:", "");
 	for (const auto& var : m_vVariables)
 	{
-		a_args.outputLog += QString::fromLatin1(var.m_varName) + " = " + QString::fromLatin1(var.m_varValue);
+		a_args.outputLog += PiplineStep::formatMessageNoError("SET:", QString::fromLatin1(var.m_varName) + " = " + 
+			QString::fromLatin1(var.m_varValue));
 		a_args.variables.push_back(var);
 	}
+	a_args.outputLog += PiplineStep::formatMessage("", "");
 	return true;
 }
 

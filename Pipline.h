@@ -45,7 +45,7 @@ public:
 
 signals:
 	void sg_update(int, const QString&);
-	void sg_finished();
+	void sg_finished(bool);
 	void sg_start(int);
 };
 

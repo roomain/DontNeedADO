@@ -150,24 +150,13 @@ bool CMakeStep::execute(ExecuteArgs& a_args)const
 			<< QString("-A %1").arg(QString::fromLatin1(m_cmakeOpt[PLATFORM])));*/
 	}
 
-	
-
-	auto lstArgs = cmakeProcess.arguments();
-	QString argumentStr;
-	std::for_each(lstArgs.begin(), lstArgs.end(), [&](const auto& arg) {argumentStr += arg + " "; });
-
 	if (!cmakeProcess.waitForStarted())
 	{
-		a_args.outputLog += "\n\nCMAKE:\n" + cmakeProcess.program() + " " + argumentStr + "\nNOT STARTED!\n" + cmakeProcess.readAllStandardError();
+		a_args.outputLog += PiplineStep::formatMessage("CMAKE:", "NOT STARTED!", cmakeProcess);
 		return false;
 	}
 	bRet = cmakeProcess.waitForFinished();
-
-	
-
-	a_args.outputLog += "\n\nCMAKE:\n" + 
-		cmakeProcess.program() + " " + argumentStr + "\n" +
-		cmakeProcess.readAllStandardOutput() + "\n" + cmakeProcess.readAllStandardError();
+	a_args.outputLog += PiplineStep::formatMessage("CMAKE:", cmakeProcess);
 	return bRet;
 }
 

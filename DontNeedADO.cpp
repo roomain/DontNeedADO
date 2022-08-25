@@ -15,6 +15,7 @@
 #include "DontNeedADOApp.h"
 #include "ConfigDialog.h"
 #include "qmessagebox.h"
+#include <qscrollbar.h>
 
 DontNeedADO::DontNeedADO(QWidget *parent)
     : QMainWindow(parent), m_pRecentFiles{ nullptr }
@@ -125,14 +126,23 @@ void DontNeedADO::onPiplineStart(int a_StepCount)
 void DontNeedADO::onPiplineUpdate(int a_step, const QString& a_message)
 {
     m_pProgress->setValue(a_step); 
-    ui.tEdtLog->append(a_message);
+    ui.tEdtLog->insertHtml(a_message);
+    update();
 }
 
-void DontNeedADO::onPiplineFinished()
+void DontNeedADO::onPiplineFinished(bool a_result)
 {
     ui.menuBar->setEnabled(true);
     ui.mainToolBar->setEnabled(true);
     ui.lstPipline->setEnabled(true);
+    if(a_result)
+        ui.tEdtLog->insertHtml(PiplineStep::toHtmlSuccess("PIPLINE SUCCED"));
+    else
+        ui.tEdtLog->insertHtml(PiplineStep::toHtmlError("PIPLINE FAILED"));
+
+    auto pScroll = ui.tEdtLog->verticalScrollBar();
+    if (pScroll)
+        pScroll->setValue(pScroll->maximum());
 }
 
 void DontNeedADO::onClean()
