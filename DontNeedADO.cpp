@@ -46,6 +46,7 @@ DontNeedADO::DontNeedADO(QWidget *parent)
     QObject::connect(ui.actionSave_pipline, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onSavePipline);
     QObject::connect(ui.actionSaveAs_pipline, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onSavePiplineAs);
     QObject::connect(ui.actionConfiguration, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onConfiguration);
+    QObject::connect(ui.actionLogs, QOverload<bool>::of(&QAction::triggered), this, &DontNeedADO::onLogs);
 
     QObject::connect(ui.lstPipline, &QListWidget::itemSelectionChanged, this, &DontNeedADO::itemSelected, Qt::DirectConnection);
     QObject::connect(ui.lstPipline->model(), &QAbstractItemModel::rowsMoved, this, &DontNeedADO::onRowsMoved, Qt::DirectConnection);
@@ -55,6 +56,8 @@ DontNeedADO::DontNeedADO(QWidget *parent)
     QObject::connect(ui.pageReplace, &ReplacePanel::sg_enabled, this, &DontNeedADO::onEnable);
     QObject::connect(ui.pageCompile, &CompilePanel::sg_enabled, this, &DontNeedADO::onEnable);
     QObject::connect(ui.pageNuget, &NugetPanel::sg_enabled, this, &DontNeedADO::onEnable);
+    QObject::connect(ui.pageTag, &TagPanel::sg_enabled, this, &DontNeedADO::onEnable);
+    QObject::connect(ui.pageVariables, &VariablesPanel::sg_enabled, this, &DontNeedADO::onEnable);
 
     ui.stackedWidget->setCurrentIndex(static_cast<int>(STEP_PAGES::LOG_PAGE));
 
@@ -192,6 +195,7 @@ void DontNeedADO::onNewPipline()
     clear();
     ui.stackedWidget->setCurrentIndex(static_cast<int>(STEP_PAGES::LOG_PAGE));
     ui.tEdtLog->clear();
+    setWindowTitle("Don't need ADO!");
     DontNeedADOApp* pApp = static_cast<DontNeedADOApp*>(qApp);
     pApp->setCurrenFile("");
 }
@@ -541,6 +545,11 @@ void DontNeedADO::addTagStep()
     std::shared_ptr<TagStep> pStep = std::make_shared<TagStep>();
     m_ADOPipline.addStep(pStep);
     ui.lstPipline->setCurrentItem(pItem);
+}
+void DontNeedADO::onLogs()
+{
+    ui.stackedWidget->setCurrentIndex(static_cast<int>(STEP_PAGES::LOG_PAGE));
+    ui.lstPipline->setCurrentItem(nullptr);
 }
 
 void DontNeedADO::addVarStep()

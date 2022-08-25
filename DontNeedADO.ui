@@ -48,7 +48,7 @@
       </widget>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>6</number>
        </property>
        <widget class="QWidget" name="pageLog">
         <layout class="QVBoxLayout" name="verticalLayout">
@@ -251,6 +251,7 @@
    <addaction name="actionAdd_Compile_Step"/>
    <addaction name="actionAdd_Nuget_Step"/>
    <addaction name="actionAdd_Tag_Step"/>
+   <addaction name="actionLogs"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionNew_pipline">
@@ -372,6 +373,18 @@
    </property>
    <property name="text">
     <string>Add Variables step</string>
+   </property>
+  </action>
+  <action name="actionLogs">
+   <property name="icon">
+    <iconset resource="DontNeedADO.qrc">
+     <normaloff>:/DontNeedADO/resources/logs.png</normaloff>:/DontNeedADO/resources/logs.png</iconset>
+   </property>
+   <property name="text">
+    <string>Logs</string>
+   </property>
+   <property name="toolTip">
+    <string>Display logs</string>
    </property>
   </action>
  </widget>

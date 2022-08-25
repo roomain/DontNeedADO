@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="DontNeedADO">
+    <file>resources/logs.png</file>
     <file>resources/variables.png</file>
     <file>resources/clean.png</file>
     <file>resources/ado.jpg</file>

@@ -48,6 +48,7 @@ private:
     void addNugetStep();
     void addTagStep();
     void addVarStep();
+    void onLogs();
     void onRemoveStep();
     //----------------------
     void itemSelected();
