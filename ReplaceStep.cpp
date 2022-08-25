@@ -78,7 +78,7 @@ bool ReplaceStep::execute(ExecuteArgs& a_args)const
 					file.flush();
 					file.close();
 					a_args.outputLog += PiplineStep::formatMessageNoError("REPLACE:", path + " : " + QString::fromLatin1(token.token) + " -> " + 
-						QString::fromLatin1(token.value));
+						QString::fromLatin1(tokenValue));
 				}
 			}
 		}

@@ -121,7 +121,7 @@ bool CompileStep::execute(ExecuteArgs& a_args)const
 		a_args.outputLog += PiplineStep::formatMessage("BUILD:", "NOT STARTED!", buildProcess);
 		return false;
 	}
-	bRet = buildProcess.waitForFinished();
+	bRet = buildProcess.waitForFinished(-1);
 	a_args.outputLog += PiplineStep::formatMessage("BUILD:", buildProcess);
 	return bRet;
 }

@@ -16,7 +16,7 @@ bool PiplineStep::isVariable(const VariableVector& a_variables, const std::strin
 {
 	for (const auto& var : a_variables)
 	{
-		if (var.m_varName == a_checkName)
+		if (QString::fromLatin1(var.m_varName).compare(QString::fromLatin1(a_checkName),Qt::CaseInsensitive) == 0)
 		{
 			a_value = var.m_varValue;
 			return true;

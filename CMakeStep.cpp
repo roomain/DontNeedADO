@@ -155,7 +155,7 @@ bool CMakeStep::execute(ExecuteArgs& a_args)const
 		a_args.outputLog += PiplineStep::formatMessage("CMAKE:", "NOT STARTED!", cmakeProcess);
 		return false;
 	}
-	bRet = cmakeProcess.waitForFinished();
+	bRet = cmakeProcess.waitForFinished(-1);
 	a_args.outputLog += PiplineStep::formatMessage("CMAKE:", cmakeProcess);
 	return bRet;
 }

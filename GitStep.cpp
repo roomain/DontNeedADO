@@ -26,7 +26,7 @@ bool GitStep::execute(ExecuteArgs& a_args)const
 		a_args.outputLog += PiplineStep::formatMessage("GIT CLONE:", "NOT STARTED!", gitProcess);
 		return false;
 	}
-	bool bOk = gitProcess.waitForFinished();
+	bool bOk = gitProcess.waitForFinished(-1);
 	a_args.outputLog += PiplineStep::formatMessage("GIT CLONE:", gitProcess);
 	//----------------------------------------------------------------------------------------------------------------------
 	QFileInfo info(QString::fromLatin1(m_url));
@@ -40,7 +40,7 @@ bool GitStep::execute(ExecuteArgs& a_args)const
 		a_args.outputLog += PiplineStep::formatMessage("GIT SUBMODULES:", "NOT STARTED!", gitProcess);
 		return false;
 	}
-	bOk = gitProcess.waitForFinished();
+	bOk = gitProcess.waitForFinished(-1);
 
 	a_args.outputLog += PiplineStep::formatMessage("GIT SUBMODULES:", gitProcess);
 	return bOk;

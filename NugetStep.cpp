@@ -65,7 +65,7 @@ bool NugetStep::execute(ExecuteArgs& a_args)const
 			a_args.outputLog += PiplineStep::formatMessage("GENERATE NUGETS:", "NOT STARTED!", nugetProcess);
 			return false;
 		}
-		bRet = nugetProcess.waitForFinished();
+		bRet = nugetProcess.waitForFinished(-1);
 
 		a_args.outputLog += PiplineStep::formatMessage("GENERATE NUGETS:", nugetProcess);
 	}

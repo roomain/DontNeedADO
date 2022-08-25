@@ -48,7 +48,7 @@ bool TagStep::execute(ExecuteArgs& a_args)const
 		a_args.outputLog += PiplineStep::formatMessage("GIT TAG:", "NOT STARTED!", gitProcess);
 		return false;
 	}
-	bool bOk = gitProcess.waitForFinished();
+	bool bOk = gitProcess.waitForFinished(-1);
 
 	a_args.outputLog += PiplineStep::formatMessage("GIT TAG:", gitProcess);
 
@@ -61,7 +61,7 @@ bool TagStep::execute(ExecuteArgs& a_args)const
 			a_args.outputLog += PiplineStep::formatMessage("GIT PUSH TAG:", "NOT STARTED!", gitProcess);
 			return false;
 		}
-		bOk = gitProcess.waitForFinished();
+		bOk = gitProcess.waitForFinished(-1);
 
 		a_args.outputLog += PiplineStep::formatMessage("GIT PUSH TAG:", gitProcess);
 	}
