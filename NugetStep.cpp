@@ -77,6 +77,9 @@ bool NugetStep::execute(ExecuteArgs& a_args)const
 	if (newDir.isEmpty())
 		newDir = (path.endsWith('/') ? path : path + "/") + (relPath.endsWith('/') ? relPath : relPath + "/");
 
+	if (!newDir.endsWith('/'))
+		newDir += "/";
+
 	// transfert generated nupkg
 	a_args.outputLog += PiplineStep::formatMessageNoError("TRANSFER FILES:", "");
 	QDirIterator iter(QApplication::applicationDirPath(), QStringList() << "*.nupkg",
