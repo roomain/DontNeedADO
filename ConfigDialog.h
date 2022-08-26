@@ -16,6 +16,8 @@ private:
 
 	void onBrowseCMake();
 	void onBrowseNuget();
+	void onBrowseMSBuild();
 	void setCMakePath(const QString& a_value);
 	void setNugetPath(const QString& a_value);
+	void setMSBuildPath(const QString& a_value);
 };

@@ -67,6 +67,17 @@ QString DontNeedADOApp::nugetPath()
 	return m_appSettings.value("nuget_directory").toString();
 }
 
+
+void DontNeedADOApp::setMSBuildPath(const QString& a_path)
+{
+	m_appSettings.setValue("msbuild_directory", a_path);
+}
+
+QString DontNeedADOApp::msbuildPath()
+{
+	return m_appSettings.value("msbuild_directory","C:/Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/Current/Bin/msbuild.exe").toString();
+}
+
 void DontNeedADOApp::setCurrenFile(const QString& a_file)
 {
 	m_currentFile = a_file;

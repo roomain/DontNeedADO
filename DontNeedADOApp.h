@@ -22,6 +22,8 @@ public:
 	QString cmakePath();
 	void setNugetPath(const QString& a_path);
 	QString nugetPath();
+	void setMSBuildPath(const QString& a_path);
+	QString msbuildPath();
 
 	void setCurrenFile(const QString& a_file);
 	QString currentFile()const noexcept;

@@ -1,6 +1,7 @@
 #include "CompileStep.h"
 #include <QXmlStreamWriter>
 #include <QDomElement>
+#include "DontNeedADOApp.h"
 
 
 
@@ -56,26 +57,10 @@ CompileStep::COMPILER CompileStep::compiler()const noexcept
 
 QString CompileStep::getCompilerPath()const noexcept
 {
-	QString sRet;
-	switch (m_compiler)
-	{
-	case COMPILER::VS_2017:
-		sRet = "\"C:/Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/Current/Bin/msbuild.exe\"";
-		break;
-
-	case COMPILER::VS_2015:
-		sRet = "\"C:/Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/Current/Bin/msbuild.exe\"";
-		break;
-
-	case COMPILER::VS_2019:
-		sRet = "\"C:/Program Files (x86)/Microsoft Visual Studio/2019/Professional/MSBuild/Current/Bin/msbuild.exe\"";
-		break;
-
-	default:
-		break;
-	}
-	return sRet;
+	DontNeedADOApp* pApp = static_cast<DontNeedADOApp*>(qApp);
+	return "\"" + pApp->msbuildPath() + "\"";
 }
+
 QString CompileStep::getCompilerVersion()const noexcept
 {
 	QString sRet;
@@ -111,11 +96,7 @@ bool CompileStep::execute(ExecuteArgs& a_args)const
 		<< QString("/p:Configuration=%1").arg(QString::fromLatin1(m_conf)) << QString("/p:VisualStudioVersion=%1").arg(getCompilerVersion())
 		<< QString::fromLatin1(m_compileFlags));
 
-	auto lstArgs = buildProcess.arguments();
-	QString argumentStr;
-	std::for_each(lstArgs.begin(), lstArgs.end(), [&](const auto& arg) {argumentStr += arg + " "; });
-	QString sCmd = buildProcess.program() + " " + argumentStr;
-
+	
 	if (!buildProcess.waitForStarted())
 	{
 		a_args.outputLog += PiplineStep::formatMessage("BUILD:", "NOT STARTED!", buildProcess);
